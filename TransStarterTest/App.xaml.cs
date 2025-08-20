@@ -1,0 +1,63 @@
+﻿using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System.Configuration;
+using System.Data;
+using System.IO;
+using System.Windows;
+using TransStarterTest.ViewModels;
+
+namespace TransStarterTest
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+        public new static App Current => (App)Application.Current;
+
+        public ServiceProvider ServiceProvider { get; private set; }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            var services = new ServiceCollection();
+
+            ConfigureServices(services);
+
+            ServiceProvider = services.BuildServiceProvider();
+
+            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+        }
+
+        private void ConfigureServices(IServiceCollection services)
+        {
+            var solutionDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)
+                                       .Parent?.Parent?.Parent?.Parent?.FullName;
+
+            if (solutionDir == null)
+                throw new Exception("Не удалось определить путь к решению");
+
+            var dbFolder = Path.Combine(solutionDir, "Database");
+            if (!Directory.Exists(dbFolder))
+                Directory.CreateDirectory(dbFolder);
+
+            var dbPath = Path.Combine(dbFolder, "sales.db");
+
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlite($"Data Source={dbPath}"));
+
+            services.AddSingleton<MainViewModel>();
+            services.AddTransient<ReportTabViewModel>();
+
+            services.AddSingleton<MainWindow>(provider =>
+            {
+                var vm = provider.GetRequiredService<MainViewModel>();
+                return new MainWindow { DataContext = vm };
+            });
+        }
+    }
+
+}
