@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Data;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace TransStarterTest.ViewModels
 {
@@ -7,6 +8,7 @@ namespace TransStarterTest.ViewModels
     {
         private readonly AppDbContext _context;
         private ReportViewMode _viewMode;
+        private ReportSettings _reportSettings;
 
         public ReportTabViewModel(string title, AppDbContext context)
         {
@@ -34,7 +36,22 @@ namespace TransStarterTest.ViewModels
 
         public PivotViewModel Pivot { get; }
 
-        public ReportSettings ReportSettings { get; set; }
+        public ReportSettings ReportSettings
+        {
+            get => _reportSettings;
+            set
+            {
+                if (_reportSettings == value) return;
+                if (_reportSettings != null)
+                    _reportSettings.PropertyChanged -= ReportSettings_PropertyChanged;
+
+                _reportSettings = value;
+                OnPropertyChanged(nameof(ReportSettings));
+
+                if (_reportSettings != null)
+                    _reportSettings.PropertyChanged += ReportSettings_PropertyChanged;
+            }
+        }
 
         public object CurrentRows => ViewMode == ReportViewMode.Details ? (object)ReportData : Pivot.Rows;
 
@@ -66,6 +83,11 @@ namespace TransStarterTest.ViewModels
             ReportData = new ObservableCollection<SaleItemViewModel>(items);
             OnPropertyChanged(nameof(ReportData));
             OnPropertyChanged(nameof(CurrentRows));
+        }
+
+        private void ReportSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            Refresh();
         }
     }
 }

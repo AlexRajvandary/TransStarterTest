@@ -9,6 +9,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="900">
     <Window.Resources>
+        <!-- Значения для ComboBox "Режим" -->
         <ObjectDataProvider MethodName="GetValues" 
                             ObjectType="{x:Type sys:Enum}" 
                             x:Key="ReportViewModeValues">
@@ -17,6 +18,7 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Window.Resources>
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -47,32 +49,92 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
+                        <!-- Панель фильтров -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBlock Text="Режим:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                             <ComboBox Width="120"
                                       ItemsSource="{Binding Source={StaticResource ReportViewModeValues}}"
-                  SelectedItem="{Binding ViewMode}">
-                               
-                            </ComboBox>
+                                      SelectedItem="{Binding ViewMode}"/>
 
-                            <TextBlock Text="Группировка:" VerticalAlignment="Center" Margin="10,0,5,0"/>
-                            <ComboBox Width="120"
-                                      ItemsSource="{Binding DataContext.GroupingOptions, RelativeSource={RelativeSource AncestorType=Window}}"
-                                      SelectedItem="{Binding ReportSettings.GroupBy}"/>
+                            <!-- Параметры только для Pivot -->
+                            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ViewMode}" Value="Pivot">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
 
-                            <TextBlock Text="Агрегат:" VerticalAlignment="Center" Margin="10,0,5,0"/>
-                            <ComboBox Width="120"
-                                      ItemsSource="{Binding DataContext.AggregateOptions, RelativeSource={RelativeSource AncestorType=Window}}"
-                                      SelectedItem="{Binding ReportSettings.AggregateBy}"/>
+                                <TextBlock Text="Группировка:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <ComboBox Width="120"
+                                          ItemsSource="{Binding DataContext.GroupingOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                          SelectedItem="{Binding ReportSettings.GroupBy}"/>
 
-                            <TextBlock Text="Год:" VerticalAlignment="Center" Margin="10,0,5,0"/>
-                            <ComboBox Width="100"
-                                      ItemsSource="{Binding DataContext.AvailableYears, RelativeSource={RelativeSource AncestorType=Window}}"
-                                      SelectedItem="{Binding ReportSettings.YearFilter}"/>
+                                <TextBlock Text="Агрегат:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                <ComboBox Width="120"
+                                          ItemsSource="{Binding DataContext.AggregateOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                          SelectedItem="{Binding ReportSettings.AggregateBy}"/>
+
+                                <TextBlock Text="Год:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                <ComboBox Width="100"
+                                          ItemsSource="{Binding DataContext.AvailableYears, RelativeSource={RelativeSource AncestorType=Window}}"
+                                          SelectedItem="{Binding ReportSettings.YearFilter}"/>
+                            </StackPanel>
+
                             <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="10,0,0,0"/>
                         </StackPanel>
 
-                        <DataGrid Grid.Row="1" ItemsSource="{Binding CurrentRows}" AutoGenerateColumns="True"/>
+                        <!-- Обычный режим -->
+                        <DataGrid Grid.Row="1"
+                                  ItemsSource="{Binding ReportData}"
+                                  AutoGenerateColumns="False">
+                            <DataGrid.Style>
+                                <Style TargetType="DataGrid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ViewMode}" Value="Details">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Style>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Дата" Binding="{Binding Date, StringFormat=dd/MM/yyyy}"/>
+                                <DataGridTextColumn Header="Покупатель" Binding="{Binding CustomerFullName}"/>
+                                <DataGridTextColumn Header="Бренд" Binding="{Binding BrandName}"/>
+                                <DataGridTextColumn Header="Модель" Binding="{Binding ModelName}"/>
+                                <DataGridTextColumn Header="Цена" Binding="{Binding Price}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Pivot режим -->
+                        <DataGrid Grid.Row="1"
+                                  ItemsSource="{Binding Pivot.Rows}"
+                                  AutoGenerateColumns="False">
+                            <DataGrid.Style>
+                                <Style TargetType="DataGrid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ViewMode}" Value="Pivot">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Style>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Группа" Binding="{Binding RowKey}"/>
+                                <!-- Пример: статично для месяцев -->
+                                <DataGridTextColumn Header="Январь" Binding="{Binding Cells[1]}"/>
+                                <DataGridTextColumn Header="Февраль" Binding="{Binding Cells[2]}"/>
+                                <!-- остальные месяцы по аналогии -->
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Grid>
                 </DataTemplate>
             </TabControl.ContentTemplate>

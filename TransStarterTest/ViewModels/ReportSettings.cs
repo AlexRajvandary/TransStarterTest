@@ -7,11 +7,6 @@
         private string _aggregateBy;
         private int _yearFilter;
 
-        public ReportSettings()
-        {
-
-        }
-
         public string GroupBy
         {
             get => _groupBy;
@@ -36,5 +31,4 @@
             set => SetProperty(ref _yearFilter, value);
         }
     }
-
 }
