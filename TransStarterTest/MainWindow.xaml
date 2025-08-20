@@ -21,8 +21,7 @@
 
         <TabControl Grid.Row="1" 
                     ItemsSource="{Binding Tabs}" 
-                    SelectedIndex="0">
-
+                    SelectedItem="{Binding SelectedTab}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Title}" />
@@ -31,7 +30,6 @@
 
             <TabControl.ContentTemplate>
                 <DataTemplate>
-
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -39,40 +37,39 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBlock Text="Группировка:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <TextBlock Text="Режим:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <ComboBox Width="120"
+                                      SelectedItem="{Binding ViewMode, Mode=TwoWay}">
+                                <ComboBoxItem Content="Details"/>
+                                <ComboBoxItem Content="Pivot"/>
+                            </ComboBox>
+
+                            <TextBlock Text="Группировка:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                             <ComboBox Width="120"
                                       ItemsSource="{Binding DataContext.GroupingOptions, RelativeSource={RelativeSource AncestorType=Window}}"
-                                      SelectedItem="{Binding GroupBy}"/>
+                                      SelectedItem="{Binding ReportSettings.GroupBy}"/>
 
                             <TextBlock Text="Агрегат:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                             <ComboBox Width="120"
                                       ItemsSource="{Binding DataContext.AggregateOptions, RelativeSource={RelativeSource AncestorType=Window}}"
-                                      SelectedItem="{Binding AggregateBy}"/>
+                                      SelectedItem="{Binding ReportSettings.AggregateBy}"/>
 
                             <TextBlock Text="Год:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                             <ComboBox Width="100"
                                       ItemsSource="{Binding DataContext.AvailableYears, RelativeSource={RelativeSource AncestorType=Window}}"
-                                      SelectedItem="{Binding YearFilter}"/>
+                                      SelectedItem="{Binding ReportSettings.YearFilter}"/>
+                            <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="10,0,0,0"/>
                         </StackPanel>
 
-                        <DataGrid Grid.Row="1" 
-                                  ItemsSource="{Binding ReportData}" 
-                                  AutoGenerateColumns="True"/>
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding SelectedTab.CurrentRows}" AutoGenerateColumns="False"/>
                     </Grid>
-
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button Content="Добавить отчет" 
-                    Width="150" Height="30" 
-                    Margin="0,0,10,0"
-                    Command="{Binding AddTabCommand}"/>
-
-            <Button Content="Export to Excel" 
-                    Width="150" Height="30" 
-                    Command="{Binding ExportCommand}"/>
+            <Button Content="Добавить отчет" Width="150" Height="30" Margin="0,0,10,0" Command="{Binding AddTabCommand}"/>
+            <Button Content="Export to Excel" Width="150" Height="30" Command="{Binding ExportCommand}"/>
         </StackPanel>
     </Grid>
 </Window>

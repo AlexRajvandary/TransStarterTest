@@ -9,5 +9,6 @@
         public string Phone { get; set; } = null!;
         public string Email { get; set; } = null!;
         public ICollection<Sale> Orders { get; set; } = new List<Sale>();
+        public string GetFullName() => $"{LastName[0]}. {FirstName[0]}. {MiddleName}";
     }
 }

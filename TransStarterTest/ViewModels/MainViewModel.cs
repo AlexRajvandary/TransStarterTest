@@ -5,9 +5,10 @@ using TransStarterTest.Commands;
 
 namespace TransStarterTest.ViewModels
 {
-    public class MainViewModel
+    public class MainViewModel : BaseViewModel
     {
         private int _tabCounter = 1;
+        private ReportTabViewModel _selectedTab;
         private readonly AppDbContext _context;
         private readonly IServiceProvider _serviceProvider;
 
@@ -34,6 +35,15 @@ namespace TransStarterTest.ViewModels
 
         public ObservableCollection<ReportTabViewModel> Tabs { get; set; }
 
+        public ReportTabViewModel SelectedTab
+        {
+            get => _selectedTab;
+            set
+            {
+                SetProperty(ref _selectedTab, value);
+            }
+        }
+
         public ICommand AddTabCommand { get; }
 
         public ICommand ExportCommand { get; }
@@ -42,9 +52,13 @@ namespace TransStarterTest.ViewModels
         {
             var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context)
             {
-                GroupBy = GroupingOptions[0],
-                AggregateBy = AggregateOptions[0],
-                YearFilter = AvailableYears[0]
+                ReportSettings = new ReportSettings
+                {
+                    GroupBy = GroupingOptions[0],
+                    AggregateBy = AggregateOptions[0],
+                    ColumnBy = "Месяц",
+                    YearFilter = AvailableYears[0]
+                }
             };
             Tabs.Add(tab);
         }
