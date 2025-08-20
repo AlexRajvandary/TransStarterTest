@@ -228,7 +228,7 @@ namespace DataGenerator.Services
                 var sale = new Sale
                 {
                     CustomerId = customer.Id,
-                    Date = DateTime.Now.AddYears(-_rnd.Next(years)).AddDays(_rnd.Next(365)),
+                    Date = DateTime.Now.AddYears(-_rnd.Next(years)).AddDays(-_rnd.Next(365)),
                     TotalPrice = 0
                 };
                 _context.Sales.Add(sale);
