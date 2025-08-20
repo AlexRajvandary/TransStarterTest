@@ -20,17 +20,20 @@ namespace TransStarterTest.ViewModels
         public void Load(string groupBy, string columnBy, string aggregateBy, int year)
         {
             var sales = _context.Sales
-                            .Where(s => s.Date.Year == year)
-                            .SelectMany(s => s.Items)
-                            .Include(si => si.Car).ThenInclude(c => c.Model)
-                            .Include(si => si.Car).ThenInclude(c => c.Brand)
-                            .Include(si => si.Sale)
+                            .Where(sale => sale.Date.Year == year)
+                            .SelectMany(sale => sale.Items)
+                            .Include(saleItem => saleItem.Car).ThenInclude(car => car.Model)
+                            .Include(sellItem => sellItem.Car).ThenInclude(car => car.Brand)
+                            .Include(saleItem => saleItem.Sale)
                             .AsEnumerable()
                             .Select(si => new
                                 {
-                                    RowKey = groupBy == "Модель" ? si.Car.Model.Name :
-                                    groupBy == "Бренд" ? si.Car.Brand.Name :
-                                    "?",
+                                    RowKey = groupBy == "Модель" 
+                                              ? si.Car.Model.Name
+                                              : groupBy == "Бренд"
+                                                    ? si.Car.Brand.Name
+                                                    : si.Sale.Customer.GetFullName(),
+
                                     ColumnKey = columnBy == "Месяц" ? si.Sale.Date.Month.ToString() :
                                     columnBy == "Год" ? si.Sale.Date.Year.ToString() :
                                     "?",
