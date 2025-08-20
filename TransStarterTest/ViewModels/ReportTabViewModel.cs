@@ -6,6 +6,7 @@ namespace TransStarterTest.ViewModels
     public class ReportTabViewModel : BaseViewModel
     {
         private readonly AppDbContext _context;
+        private ReportViewMode _viewMode;
 
         public ReportTabViewModel(string title, AppDbContext context)
         {
@@ -14,11 +15,20 @@ namespace TransStarterTest.ViewModels
             Pivot = new PivotViewModel(context);
             ReportSettings = new ReportSettings();
             ViewMode = ReportViewMode.Details;
+            LoadDetails();
         }
 
         public string Title { get; }
 
-        public ReportViewMode ViewMode { get; set; }
+        public ReportViewMode ViewMode 
+        {
+            get => _viewMode;
+            set
+            {
+                SetProperty(ref _viewMode, value);
+                Refresh();
+            }
+        }
 
         public ObservableCollection<SaleItemViewModel> ReportData { get; set; } = new();
 
@@ -41,7 +51,7 @@ namespace TransStarterTest.ViewModels
         private void LoadDetails()
         {
             var items = _context.Sales
-                .Where(sale => sale.Date.Year == ReportSettings.YearFilter)
+               
                 .SelectMany(sale => sale.Items)
                 .Select(saleItem => new SaleItemViewModel
                 {

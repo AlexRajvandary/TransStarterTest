@@ -4,8 +4,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TransStarterTest"
+        xmlns:enum="clr-namespace:TransStarterTest.ViewModels"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="900">
+    <Window.Resources>
+        <ObjectDataProvider MethodName="GetValues" 
+                            ObjectType="{x:Type sys:Enum}" 
+                            x:Key="ReportViewModeValues">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enum:ReportViewMode"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -39,9 +50,9 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBlock Text="Режим:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                             <ComboBox Width="120"
-                                      SelectedItem="{Binding ViewMode, Mode=TwoWay}">
-                                <ComboBoxItem Content="Details"/>
-                                <ComboBoxItem Content="Pivot"/>
+                                      ItemsSource="{Binding Source={StaticResource ReportViewModeValues}}"
+                  SelectedItem="{Binding ViewMode}">
+                               
                             </ComboBox>
 
                             <TextBlock Text="Группировка:" VerticalAlignment="Center" Margin="10,0,5,0"/>
@@ -61,7 +72,7 @@
                             <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="10,0,0,0"/>
                         </StackPanel>
 
-                        <DataGrid Grid.Row="1" ItemsSource="{Binding SelectedTab.CurrentRows}" AutoGenerateColumns="False"/>
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding CurrentRows}" AutoGenerateColumns="True"/>
                     </Grid>
                 </DataTemplate>
             </TabControl.ContentTemplate>

@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Folder Include="Views\" />
+    <Folder Include="Новая папка\" />
   </ItemGroup>
 
   <ItemGroup>
