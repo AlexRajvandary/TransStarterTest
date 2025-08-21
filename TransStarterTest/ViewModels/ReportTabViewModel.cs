@@ -86,8 +86,8 @@ namespace TransStarterTest.ViewModels
                     CustomerFullName = saleItem.Sale.Customer.GetFullName(),
                     BrandName = saleItem.Car.Brand.Name,
                     ModelName = saleItem.Car.Model.Name,
-                    Price = saleItem.Price
-                })
+                    Price = (double)saleItem.Price
+                }).OrderByDescending(saleItem => saleItem.Date)
                 .ToList();
 
             ReportData = new ObservableCollection<SaleItemDto>(items);

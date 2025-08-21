@@ -3,7 +3,7 @@
 
 namespace TransStarterTest.ViewModels
 {
-    public class PivotRowViewModel : BaseViewModel
+    public class PivotRowViewModel
     {
         private double _december;
         private double _january;
@@ -23,77 +23,73 @@ namespace TransStarterTest.ViewModels
         public double January
         {
             get => _january;
-            set { _january = value; OnPropertyChanged(nameof(January)); }
+            set { _january = value;  }
         }
 
         public double Febuary
         {
             get => _febuary;
-            set { _febuary = value; OnPropertyChanged(nameof(Febuary)); }
+            set { _febuary = value; }
         }
 
         public double March
         {
             get => _march;
-            set { _march = value; OnPropertyChanged(nameof(March)); }
+            set { _march = value; }
         }
 
         public double April
         {
             get => _april;
-            set { _april = value; OnPropertyChanged(nameof(April)); }
+            set { _april = value; }
         }
 
         public double May
         {
             get => _may;
-            set { _may = value; OnPropertyChanged(nameof(May)); }
+            set { _may = value; }
         }
 
         public double June
         {
             get => _june;
-            set { _june = value; OnPropertyChanged(nameof(June)); }
+            set { _june = value; }
         }
 
         public double July
         {
             get => _july;
-            set { _july = value; OnPropertyChanged(nameof(July)); }
+            set { _july = value; }
         }
 
         public double August
         {
             get => _august;
-            set { _august = value; OnPropertyChanged(nameof(August)); }
+            set { _august = value; }
         }
 
         public double September
         {
             get => _september;
-            set { _september = value; OnPropertyChanged(nameof(September)); }
+            set { _september = value; }
         }
 
         public double October
         {
             get => _october;
-            set { _october = value; OnPropertyChanged(nameof(October)); }
+            set { _october = value; }
         }
 
         public double November
         {
             get => _november;
-            set { _november = value; OnPropertyChanged(nameof(November)); }
+            set { _november = value; }
         }
 
         public double December
         {
             get => _december;
-            set { _december = value; OnPropertyChanged(nameof(December)); }
+            set { _december = value; }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -1,7 +1,5 @@
 ﻿using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.ObjectModel;
-using TransStarterTest.Models;
 using TransStarterTest.Models.Enums;
 
 namespace TransStarterTest.ViewModels
@@ -21,7 +19,6 @@ namespace TransStarterTest.ViewModels
 
         public void Load(ReportSettings reportSettings)
         {
-            // Получаем агрегированные данные из базы
             var groupedQuery = _context.Sales
                 .Where(sale => sale.Date.Year == reportSettings.YearFilter)
                 .SelectMany(sale => sale.Items)
@@ -30,7 +27,7 @@ namespace TransStarterTest.ViewModels
                 .Include(si => si.Sale)
                 .GroupBy(si => new
                 {
-                    RowKey = reportSettings.GroupBy == GroupingOptions.Model ? si.Car.Model.Name :
+                    RowKey = reportSettings.GroupBy == GroupingOptions.Model ? si.Car.Brand.Name + " " + si.Car.Model.Name :
                              reportSettings.GroupBy == GroupingOptions.Brand ? si.Car.Brand.Name :
                              reportSettings.GroupBy == GroupingOptions.Customer ? si.Sale.Customer.FirstName + " " + si.Sale.Customer.LastName :
                              string.Empty,
@@ -78,9 +75,6 @@ namespace TransStarterTest.ViewModels
             Rows = pivot;
 
             OnPropertyChanged(nameof(Rows));
-            OnPropertyChanged(nameof(ColumnHeaders));
         }
-
-
     }
 }

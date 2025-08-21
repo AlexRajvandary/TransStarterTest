@@ -23,6 +23,7 @@ namespace TransStarterTest.ViewModels
             ExportCommand = new RelayCommand(_ => Export());
 
             AddTab();
+            SelectedTab = Tabs.First();
         }
 
         public ObservableCollection<ReportTabViewModel> Tabs { get; set; }

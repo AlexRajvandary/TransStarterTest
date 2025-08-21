@@ -105,6 +105,7 @@
                         <!-- Обычный режим -->
                         <DataGrid Grid.Row="1"
                                   ItemsSource="{Binding ReportData}"
+                                  IsReadOnly="True"
                                   AutoGenerateColumns="False"
                                   EnableRowVirtualization="True"
                                   EnableColumnVirtualization="True"
@@ -126,13 +127,16 @@
                                 <DataGridTextColumn Header="Покупатель" Binding="{Binding CustomerFullName}"/>
                                 <DataGridTextColumn Header="Бренд" Binding="{Binding BrandName}"/>
                                 <DataGridTextColumn Header="Модель" Binding="{Binding ModelName}"/>
-                                <DataGridTextColumn Header="Цена" Binding="{Binding Price}"/>
+                                <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:N0}, ConverterCulture=ru-RU}"/>
                             </DataGrid.Columns>
                         </DataGrid>
 
                         <!-- Pivot режим -->
                         <DataGrid Grid.Row="1"
                                   ItemsSource="{Binding Pivot.Rows}"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  IsReadOnly="True"
                                   AutoGenerateColumns="False"
                                   EnableRowVirtualization="True"
                                   EnableColumnVirtualization="True"
@@ -158,7 +162,7 @@
                                 <DataGridTextColumn Header="Март" Binding="{Binding March}"/>
                                 <DataGridTextColumn Header="Апрель" Binding="{Binding April}"/>
                                 <DataGridTextColumn Header="Май" Binding="{Binding May}"/>
-                                <DataGridTextColumn Header="Инюнь" Binding="{Binding June}"/>
+                                <DataGridTextColumn Header="Июнь" Binding="{Binding June}"/>
                                 <DataGridTextColumn Header="Июль" Binding="{Binding July}"/>
                                 <DataGridTextColumn Header="Август" Binding="{Binding August}"/>
                                 <DataGridTextColumn Header="Сентябрь" Binding="{Binding September}"/>
