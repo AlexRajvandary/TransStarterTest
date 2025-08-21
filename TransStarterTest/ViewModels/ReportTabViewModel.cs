@@ -1,6 +1,8 @@
 ﻿using Infrastructure.Data;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using TransStarterTest.Models;
+using TransStarterTest.Models.Enums;
 
 namespace TransStarterTest.ViewModels
 {
@@ -32,7 +34,7 @@ namespace TransStarterTest.ViewModels
             }
         }
 
-        public ObservableCollection<SaleItemViewModel> ReportData { get; set; } = new();
+        public ObservableCollection<SaleItemDto> ReportData { get; set; } = new();
 
         public PivotViewModel Pivot { get; }
 
@@ -60,7 +62,7 @@ namespace TransStarterTest.ViewModels
             if (ViewMode == ReportViewMode.Details)
                 LoadDetails();
             else if (ViewMode == ReportViewMode.Pivot)
-                Pivot.Load(ReportSettings.GroupBy, ReportSettings.ColumnBy, ReportSettings.AggregateBy, ReportSettings.YearFilter);
+                Pivot.Load(ReportSettings);
 
             OnPropertyChanged(nameof(CurrentRows));
         }
@@ -70,7 +72,7 @@ namespace TransStarterTest.ViewModels
             var items = _context.Sales
                
                 .SelectMany(sale => sale.Items)
-                .Select(saleItem => new SaleItemViewModel
+                .Select(saleItem => new SaleItemDto
                 {
                     Date = saleItem.Sale.Date,
                     CustomerFullName = saleItem.Sale.Customer.GetFullName(),
@@ -80,7 +82,7 @@ namespace TransStarterTest.ViewModels
                 })
                 .ToList();
 
-            ReportData = new ObservableCollection<SaleItemViewModel>(items);
+            ReportData = new ObservableCollection<SaleItemDto>(items);
             OnPropertyChanged(nameof(ReportData));
             OnPropertyChanged(nameof(CurrentRows));
         }

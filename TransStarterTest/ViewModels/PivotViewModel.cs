@@ -1,6 +1,8 @@
 ﻿using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
+using TransStarterTest.Models;
+using TransStarterTest.Models.Enums;
 
 namespace TransStarterTest.ViewModels
 {
@@ -17,10 +19,10 @@ namespace TransStarterTest.ViewModels
 
         public ObservableCollection<string> ColumnHeaders { get; set; } = new();
 
-        public void Load(string groupBy, string columnBy, string aggregateBy, int year)
+        public void Load(ReportSettings reportSettings)
         {
             var sales = _context.Sales
-                            .Where(sale => sale.Date.Year == year)
+                            .Where(sale => sale.Date.Year == reportSettings.YearFilter)
                             .SelectMany(sale => sale.Items)
                             .Include(saleItem => saleItem.Car).ThenInclude(car => car.Model)
                             .Include(sellItem => sellItem.Car).ThenInclude(car => car.Brand)
@@ -28,18 +30,20 @@ namespace TransStarterTest.ViewModels
                             .AsEnumerable()
                             .Select(si => new
                                 {
-                                    RowKey = groupBy == "Модель" 
-                                              ? si.Car.Model.Name
-                                              : groupBy == "Бренд"
-                                                    ? si.Car.Brand.Name
-                                                    : si.Sale.Customer.GetFullName(),
+                                    RowKey = reportSettings.GroupBy switch
+                                    {
+                                        GroupingOptions.Model => si.Car.Model.Name,
+                                        GroupingOptions.Brand => si.Car.Brand.Name,
+                                        GroupingOptions.Customer => si.Sale.Customer.GetFullName(),
+                                        _ => string.Empty
+                                    },
 
-                                    ColumnKey = columnBy == "Месяц" ? si.Sale.Date.Month.ToString() :
-                                    columnBy == "Год" ? si.Sale.Date.Year.ToString() :
-                                    "?",
+                                    ColumnKey = reportSettings.ColumnBy == ColumnOptions.Months
+                                                    ? si.Sale.Date.Month.ToString()
+                                                    : si.Sale.Date.Year.ToString(),
+
                                     Value = si.Price
-                                })
-                            .ToList();
+                                }).ToList();
 
             var grouped = sales
                 .GroupBy(x => new { x.RowKey, x.ColumnKey })
@@ -47,10 +51,10 @@ namespace TransStarterTest.ViewModels
                 {
                     g.Key.RowKey,
                     g.Key.ColumnKey,
-                    Value = aggregateBy switch
+                    Value = reportSettings.AggregateBy switch
                     {
-                        "Количество" => g.Count(),
-                        "Сумма" => g.Sum(x => x.Value),
+                        AggregateOptions.QuantityOfSales => g.Count(),
+                        AggregateOptions.SumOfSales => g.Sum(x => x.Value),
                         _ => 0
                     }
                 })

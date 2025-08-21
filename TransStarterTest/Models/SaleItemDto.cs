@@ -1,6 +1,6 @@
-﻿namespace TransStarterTest.ViewModels
+﻿namespace TransStarterTest.Models
 {
-    public class SaleItemViewModel
+    public class SaleItemDto
     {
         public string BrandName { get; set; } = null!;
         public string ModelName { get; set; } = null!;

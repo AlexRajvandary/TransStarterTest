@@ -1,4 +1,4 @@
-﻿namespace TransStarterTest.ViewModels
+﻿namespace TransStarterTest.Models.Enums
 {
     public enum ReportViewMode
     {

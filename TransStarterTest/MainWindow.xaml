@@ -4,17 +4,33 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TransStarterTest"
-        xmlns:enum="clr-namespace:TransStarterTest.ViewModels"
+        xmlns:enum="clr-namespace:TransStarterTest.Models.Enums"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="900">
     <Window.Resources>
-        <!-- Значения для ComboBox "Режим" -->
+        <!-- Значения для ComboBox-ов режима и настроект группировки/аггрегирования -->
         <ObjectDataProvider MethodName="GetValues" 
                             ObjectType="{x:Type sys:Enum}" 
                             x:Key="ReportViewModeValues">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="enum:ReportViewMode"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider MethodName="GetValues" 
+                     ObjectType="{x:Type sys:Enum}" 
+                     x:Key="GroupingOptionsValues">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enum:GroupingOptions"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider MethodName="GetValues" 
+              ObjectType="{x:Type sys:Enum}" 
+              x:Key="AggregateOptionsValues">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enum:AggregateOptions"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Window.Resources>
@@ -71,12 +87,12 @@
 
                                 <TextBlock Text="Группировка:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                                 <ComboBox Width="120"
-                                          ItemsSource="{Binding DataContext.GroupingOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                           ItemsSource="{Binding Source={StaticResource GroupingOptionsValues}}"
                                           SelectedItem="{Binding ReportSettings.GroupBy}"/>
 
                                 <TextBlock Text="Агрегат:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                 <ComboBox Width="120"
-                                          ItemsSource="{Binding DataContext.AggregateOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                          ItemsSource="{Binding Source={StaticResource AggregateOptionsValues}}"
                                           SelectedItem="{Binding ReportSettings.AggregateBy}"/>
 
                                 <TextBlock Text="Год:" VerticalAlignment="Center" Margin="10,0,5,0"/>

@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using TransStarterTest.Commands;
+using TransStarterTest.Models;
 
 namespace TransStarterTest.ViewModels
 {
@@ -18,8 +19,7 @@ namespace TransStarterTest.ViewModels
             _serviceProvider = serviceProvider;
 
             Tabs = new ObservableCollection<ReportTabViewModel>();
-            GroupingOptions = new ObservableCollection<string> { "Модель", "Бренд", "Покупатель" };
-            AggregateOptions = new ObservableCollection<string> { "Количество продаж", "Сумма продаж" };
+           
             AvailableYears = new ObservableCollection<int> { 2023, 2024, 2025 };
 
             AddTabCommand = new RelayCommand(_ => AddTab());
@@ -27,11 +27,8 @@ namespace TransStarterTest.ViewModels
 
             AddTab();
         }
-        public ObservableCollection<string> AggregateOptions { get; set; }
 
         public ObservableCollection<int> AvailableYears { get; set; }
-
-        public ObservableCollection<string> GroupingOptions { get; set; }
 
         public ObservableCollection<ReportTabViewModel> Tabs { get; set; }
 
@@ -54,9 +51,6 @@ namespace TransStarterTest.ViewModels
             {
                 ReportSettings = new ReportSettings
                 {
-                    GroupBy = GroupingOptions[0],
-                    AggregateBy = AggregateOptions[0],
-                    ColumnBy = "Месяц",
                     YearFilter = AvailableYears[0]
                 }
             };

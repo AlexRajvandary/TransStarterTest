@@ -1,4 +1,4 @@
-﻿namespace TransStarterTest.ViewModels
+﻿namespace TransStarterTest.Models
 {
     public class PivotRowViewModel
     {
