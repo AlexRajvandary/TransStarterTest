@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:TransStarterTest"
         xmlns:enum="clr-namespace:TransStarterTest.Models.Enums"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:attachedBehaviors="clr-namespace:TransStarterTest.Behaviors"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="900">
     <Window.Resources>
@@ -49,6 +50,7 @@
                    Margin="0,0,0,10"/>
 
         <TabControl Grid.Row="1" 
+                    x:Name="MainTabControl"
                     ItemsSource="{Binding Tabs}" 
                     SelectedItem="{Binding SelectedTab}">
             <TabControl.ItemTemplate>
@@ -79,6 +81,9 @@
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ViewMode}" Value="Pivot">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ViewMode}" Value="DynamicPivot">
                                                 <Setter Property="Visibility" Value="Visible"/>
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -171,6 +176,30 @@
                                 <DataGridTextColumn Header="Декабрь" Binding="{Binding December}"/>
                                 <!-- остальные месяцы по аналогии -->
                             </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Dynamic Pivot режим -->
+                        <DataGrid x:Name="DynamicPivotGrid"
+                                  ItemsSource="{Binding DynamicPivot.Test}"
+                                  attachedBehaviors:DataGridColumnsBehavior.BindableColumns="{Binding ColumnDefinitions}"
+                            Grid.Row="1"
+                            AutoGenerateColumns="False"
+                            EnableRowVirtualization="True"
+                            EnableColumnVirtualization="True"
+                            VirtualizingPanel.IsVirtualizing="True"
+                            VirtualizingPanel.VirtualizationMode="Recycling">
+
+                            <DataGrid.Style>
+                                <Style TargetType="DataGrid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ViewMode}" Value="DynamicPivot">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Style>
+
                         </DataGrid>
                     </Grid>
                 </DataTemplate>

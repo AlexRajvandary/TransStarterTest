@@ -18,6 +18,7 @@ namespace TransStarterTest.ViewModels
             Title = title;
             _context = context;
             Pivot = new PivotViewModel(context);
+            DynamicPivot = new DynamicPivotViewModel(context);
             ReportSettings = new ReportSettings();
             ViewMode = ReportViewMode.Details;
 
@@ -41,6 +42,8 @@ namespace TransStarterTest.ViewModels
         public ObservableCollection<SaleItemDto> ReportData { get; set; } = new();
 
         public PivotViewModel Pivot { get; }
+
+        public DynamicPivotViewModel DynamicPivot { get; }
 
         public ReportSettings ReportSettings
         {
@@ -74,6 +77,8 @@ namespace TransStarterTest.ViewModels
                 LoadData();
             else if (ViewMode == ReportViewMode.Pivot)
                 Pivot.Load(ReportSettings);
+            else if (ViewMode == ReportViewMode.DynamicPivot)
+                DynamicPivot.Load(ReportSettings);
         }
 
         private void LoadData()

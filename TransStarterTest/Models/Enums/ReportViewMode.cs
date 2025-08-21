@@ -3,6 +3,7 @@
     public enum ReportViewMode
     {
         Details,
-        Pivot
+        Pivot,
+        DynamicPivot
     }
 }
