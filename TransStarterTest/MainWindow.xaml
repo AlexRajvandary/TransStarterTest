@@ -105,7 +105,11 @@
                         <!-- Обычный режим -->
                         <DataGrid Grid.Row="1"
                                   ItemsSource="{Binding ReportData}"
-                                  AutoGenerateColumns="False">
+                                  AutoGenerateColumns="False"
+                                  EnableRowVirtualization="True"
+                                  EnableColumnVirtualization="True"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling">
                             <DataGrid.Style>
                                 <Style TargetType="DataGrid">
                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -129,7 +133,12 @@
                         <!-- Pivot режим -->
                         <DataGrid Grid.Row="1"
                                   ItemsSource="{Binding Pivot.Rows}"
-                                  AutoGenerateColumns="False">
+                                  AutoGenerateColumns="False"
+                                  EnableRowVirtualization="True"
+                                  EnableColumnVirtualization="True"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling">
+                          
                             <DataGrid.Style>
                                 <Style TargetType="DataGrid">
                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -144,18 +153,18 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Группа" Binding="{Binding RowKey}"/>
                                 <!-- Пример: статично для месяцев -->
-                                <DataGridTextColumn Header="Январь" Binding="{Binding Cells[1]}"/>
-                                <DataGridTextColumn Header="Февраль" Binding="{Binding Cells[2]}"/>
-                                <DataGridTextColumn Header="Март" Binding="{Binding Cells[3]}"/>
-                                <DataGridTextColumn Header="Апрель" Binding="{Binding Cells[4]}"/>
-                                <DataGridTextColumn Header="Май" Binding="{Binding Cells[5]}"/>
-                                <DataGridTextColumn Header="Инюнь" Binding="{Binding Cells[6]}"/>
-                                <DataGridTextColumn Header="Июль" Binding="{Binding Cells[7]}"/>
-                                <DataGridTextColumn Header="Август" Binding="{Binding Cells[8]}"/>
-                                <DataGridTextColumn Header="Сентябрь" Binding="{Binding Cells[9]}"/>
-                                <DataGridTextColumn Header="Октябрь" Binding="{Binding Cells[10]}"/>
-                                <DataGridTextColumn Header="Ноябрь" Binding="{Binding Cells[11]}"/>
-                                <DataGridTextColumn Header="Декабрь" Binding="{Binding Cells[12]}"/>
+                                <DataGridTextColumn Header="Январь" Binding="{Binding January}"/>
+                                <DataGridTextColumn Header="Февраль" Binding="{Binding Febuary}"/>
+                                <DataGridTextColumn Header="Март" Binding="{Binding March}"/>
+                                <DataGridTextColumn Header="Апрель" Binding="{Binding April}"/>
+                                <DataGridTextColumn Header="Май" Binding="{Binding May}"/>
+                                <DataGridTextColumn Header="Инюнь" Binding="{Binding June}"/>
+                                <DataGridTextColumn Header="Июль" Binding="{Binding July}"/>
+                                <DataGridTextColumn Header="Август" Binding="{Binding August}"/>
+                                <DataGridTextColumn Header="Сентябрь" Binding="{Binding September}"/>
+                                <DataGridTextColumn Header="Октябрь" Binding="{Binding October}"/>
+                                <DataGridTextColumn Header="Ноябрь" Binding="{Binding November}"/>
+                                <DataGridTextColumn Header="Декабрь" Binding="{Binding December}"/>
                                 <!-- остальные месяцы по аналогии -->
                             </DataGrid.Columns>
                         </DataGrid>

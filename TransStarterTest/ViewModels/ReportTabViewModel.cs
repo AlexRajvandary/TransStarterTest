@@ -59,8 +59,6 @@ namespace TransStarterTest.ViewModels
             }
         }
 
-        public object CurrentRows => ViewMode == ReportViewMode.Details ? (object)ReportData : Pivot.Rows;
-
         public List<int> AvailableYears
         {
             get => _years;
@@ -76,8 +74,6 @@ namespace TransStarterTest.ViewModels
                 LoadData();
             else if (ViewMode == ReportViewMode.Pivot)
                 Pivot.Load(ReportSettings);
-
-            OnPropertyChanged(nameof(CurrentRows));
         }
 
         private void LoadData()
@@ -96,7 +92,6 @@ namespace TransStarterTest.ViewModels
 
             ReportData = new ObservableCollection<SaleItemDto>(items);
             OnPropertyChanged(nameof(ReportData));
-            OnPropertyChanged(nameof(CurrentRows));
         }
 
         private void GetSalesYears()

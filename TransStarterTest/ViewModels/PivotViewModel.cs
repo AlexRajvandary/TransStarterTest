@@ -15,70 +15,72 @@ namespace TransStarterTest.ViewModels
             _context = context;
         }
 
-        public ObservableCollection<PivotRowViewModel> Rows { get; set; } = new();
+        public List<PivotRowViewModel> Rows { get; set; } = new();
 
-        public ObservableCollection<string> ColumnHeaders { get; set; } = new();
+        public List<string> ColumnHeaders { get; set; } = new();
 
         public void Load(ReportSettings reportSettings)
         {
-            var sales = _context.Sales
-                            .Where(sale => sale.Date.Year == reportSettings.YearFilter)
-                            .SelectMany(sale => sale.Items)
-                            .Include(saleItem => saleItem.Car).ThenInclude(car => car.Model)
-                            .Include(sellItem => sellItem.Car).ThenInclude(car => car.Brand)
-                            .Include(saleItem => saleItem.Sale)
-                            .AsEnumerable()
-                            .Select(si => new
-                                {
-                                    RowKey = reportSettings.GroupBy switch
-                                    {
-                                        GroupingOptions.Model => si.Car.Model.Name,
-                                        GroupingOptions.Brand => si.Car.Brand.Name,
-                                        GroupingOptions.Customer => si.Sale.Customer.GetFullName(),
-                                        _ => string.Empty
-                                    },
-
-                                    ColumnKey = reportSettings.ColumnBy == ColumnOptions.Months
-                                                    ? si.Sale.Date.Month.ToString()
-                                                    : si.Sale.Date.Year.ToString(),
-
-                                    Value = si.Price
-                                }).ToList();
-
-            var grouped = sales
-                .GroupBy(x => new { x.RowKey, x.ColumnKey })
+            // Получаем агрегированные данные из базы
+            var groupedQuery = _context.Sales
+                .Where(sale => sale.Date.Year == reportSettings.YearFilter)
+                .SelectMany(sale => sale.Items)
+                .Include(si => si.Car).ThenInclude(c => c.Model)
+                .Include(si => si.Car).ThenInclude(c => c.Brand)
+                .Include(si => si.Sale)
+                .GroupBy(si => new
+                {
+                    RowKey = reportSettings.GroupBy == GroupingOptions.Model ? si.Car.Model.Name :
+                             reportSettings.GroupBy == GroupingOptions.Brand ? si.Car.Brand.Name :
+                             reportSettings.GroupBy == GroupingOptions.Customer ? si.Sale.Customer.FirstName + " " + si.Sale.Customer.LastName :
+                             string.Empty,
+                    Month = si.Sale.Date.Month
+                })
                 .Select(g => new
                 {
                     g.Key.RowKey,
-                    g.Key.ColumnKey,
-                    Value = reportSettings.AggregateBy switch
-                    {
-                        AggregateOptions.QuantityOfSales => g.Count(),
-                        AggregateOptions.SumOfSales => g.Sum(x => x.Value),
-                        _ => 0
-                    }
+                    g.Key.Month,
+                    Value = reportSettings.AggregateBy == AggregateOptions.QuantityOfSales ? g.Count() :
+                            reportSettings.AggregateBy == AggregateOptions.SumOfSales ? g.Sum(x => x.Price) :
+                            0
                 })
                 .ToList();
 
-            var pivot = grouped
-                .GroupBy(c => c.RowKey)
-                .Select(g =>
+            var pivot = groupedQuery
+                .GroupBy(x => x.RowKey)
+                .Select(group =>
                 {
-                    var row = new PivotRowViewModel { RowKey = g.Key };
-                    foreach (var cell in g)
-                        row.Cells[cell.ColumnKey] = cell.Value;
+                    var row = new PivotRowViewModel { RowKey = group.Key };
+
+                    foreach (var cell in group)
+                    {
+                        switch (cell.Month)
+                        {
+                            case 1: row.January = (double)cell.Value; break;
+                            case 2: row.Febuary = (double)cell.Value; break;
+                            case 3: row.March = (double)cell.Value; break;
+                            case 4: row.April = (double)cell.Value; break;
+                            case 5: row.May = (double)cell.Value; break;
+                            case 6: row.June = (double)cell.Value; break;
+                            case 7: row.July = (double)cell.Value; break;
+                            case 8: row.August = (double)cell.Value; break;
+                            case 9: row.September = (double)cell.Value; break;
+                            case 10: row.October = (double)cell.Value; break;
+                            case 11: row.November = (double)cell.Value; break;
+                            case 12: row.December = (double)cell.Value; break;
+                        }
+                    }
+
                     return row;
                 })
                 .ToList();
 
-            ColumnHeaders = new ObservableCollection<string>(
-            grouped.Select(x => x.ColumnKey)
-           .Distinct()
-           .OrderBy(x => x));
+            Rows = pivot;
 
-            Rows = new ObservableCollection<PivotRowViewModel>(pivot);
             OnPropertyChanged(nameof(Rows));
             OnPropertyChanged(nameof(ColumnHeaders));
         }
+
+
     }
 }
