@@ -79,28 +79,22 @@ namespace DataGenerator.Services
 };
 
         private readonly string[] configurations = { "Standard", "Premium", "Sport" };
-        private readonly string[] firstNames =
+        private readonly string[] menFirstNames =
  {
     "Александр", "Максим", "Иван", "Дмитрий", "Никита",
     "Михаил", "Андрей", "Сергей", "Егор", "Алексей",
-    "Анна", "Мария", "Екатерина", "Дарья", "Ольга",
-    "Наталья", "Елена", "Алина", "Ксения", "Виктория"
 };
 
         private readonly string[] middleNames =
         {
     "Александрович", "Максимович", "Иванович", "Дмитриевич", "Никитович",
-    "Михайлович", "Андреевич", "Сергеевич", "Егорович", "Алексеевич",
-    "Александровна", "Максимовна", "Ивановна", "Дмитриевна", "Никитовна",
-    "Михайловна", "Андреевна", "Сергеевна", "Егоровна", "Алексеевна"
+    "Михайлович", "Андреевич", "Сергеевич", "Егорович", "Алексеевич"
 };
 
         private readonly string[] lastNames =
         {
     "Иванов", "Петров", "Сидоров", "Кузнецов", "Смирнов",
-    "Попов", "Васильев", "Морозов", "Волков", "Соколов",
-    "Козлова", "Смирнова", "Попова", "Васильева", "Морозова",
-    "Волкова", "Соколова", "Федорова", "Михайлова", "Алексеева"
+    "Попов", "Васильев", "Морозов", "Волков", "Соколов"
 };
 
         private List<Brand> brands = new();
@@ -183,7 +177,8 @@ namespace DataGenerator.Services
                     BrandId = brand.Id,
                     ModelId = model.Id,
                     ConfigurationId = config.Id,
-                    Color = color
+                    Color = color,
+                    Price = GenerateCarPrice()
                 });
             }
 
@@ -191,12 +186,19 @@ namespace DataGenerator.Services
             return list;
         }
 
+        public decimal GenerateCarPrice(decimal minPrice = 1_000_000, decimal maxPrice = 20_000_000)
+        {
+            decimal price = (decimal)(_rnd.NextDouble() * (double)(maxPrice - minPrice) + (double)minPrice);
+            
+            return Math.Round(price / 1000) * 1000;
+        }
+
         private List<Customer> GenerateCustomers(int count)
         {
             var list = new List<Customer>();
             for (int i = 0; i < count; i++)
             {
-                var firstName = firstNames[_rnd.Next(firstNames.Length)];
+                var firstName = menFirstNames[_rnd.Next(menFirstNames.Length)];
                 var lastName = lastNames[_rnd.Next(lastNames.Length)];
                 var middleName = middleNames[_rnd.Next(middleNames.Length)];
 
@@ -234,19 +236,18 @@ namespace DataGenerator.Services
                 _context.Sales.Add(sale);
                 _context.SaveChanges();
 
-                int itemsCount = _rnd.Next(1, 4);
+                int itemsCount = _rnd.Next(1, 2);
                 decimal totalPrice = 0;
                 for (int j = 0; j < itemsCount; j++)
                 {
                     var car = cars[_rnd.Next(cars.Count)];
-                    var price = _rnd.Next(20000, 100000);
-                    totalPrice += price;
+                    totalPrice += car.Price;
 
                     _context.SaleItems.Add(new SaleItem
                     {
                         SaleId = sale.Id,
                         CarId = car.Id,
-                        Price = price
+                        Price = car.Price
                     });
                 }
 
