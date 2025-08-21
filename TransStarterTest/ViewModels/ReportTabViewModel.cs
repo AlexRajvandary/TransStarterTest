@@ -23,6 +23,7 @@ namespace TransStarterTest.ViewModels
 
             LoadData();
             GetSalesYears();
+            ReportSettings.YearFilter = AvailableYears.First();
         }
 
         public string Title { get; }
@@ -100,7 +101,7 @@ namespace TransStarterTest.ViewModels
 
         private void GetSalesYears()
         {
-            AvailableYears = ReportData.Select(saleItem => saleItem.Date.Year).Distinct().ToList();
+            AvailableYears = ReportData.Select(saleItem => saleItem.Date.Year).Distinct().OrderDescending().ToList();
         }
 
         private void ReportSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
