@@ -10,5 +10,6 @@
         public Model Model { get; set; } = null!;
         public int ConfigurationId { get; set; }
         public Configuration Configuration { get; set; } = null!;
+        public decimal Price { get; set; }
     }
 }
