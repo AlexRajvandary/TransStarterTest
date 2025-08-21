@@ -100,8 +100,6 @@
                                           ItemsSource="{Binding AvailableYears}"
                                           SelectedItem="{Binding ReportSettings.YearFilter}"/>
                             </StackPanel>
-
-                            <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="10,0,0,0"/>
                         </StackPanel>
 
                         <!-- Обычный режим -->
@@ -148,6 +146,16 @@
                                 <!-- Пример: статично для месяцев -->
                                 <DataGridTextColumn Header="Январь" Binding="{Binding Cells[1]}"/>
                                 <DataGridTextColumn Header="Февраль" Binding="{Binding Cells[2]}"/>
+                                <DataGridTextColumn Header="Март" Binding="{Binding Cells[3]}"/>
+                                <DataGridTextColumn Header="Апрель" Binding="{Binding Cells[4]}"/>
+                                <DataGridTextColumn Header="Май" Binding="{Binding Cells[5]}"/>
+                                <DataGridTextColumn Header="Инюнь" Binding="{Binding Cells[6]}"/>
+                                <DataGridTextColumn Header="Июль" Binding="{Binding Cells[7]}"/>
+                                <DataGridTextColumn Header="Август" Binding="{Binding Cells[8]}"/>
+                                <DataGridTextColumn Header="Сентябрь" Binding="{Binding Cells[9]}"/>
+                                <DataGridTextColumn Header="Октябрь" Binding="{Binding Cells[10]}"/>
+                                <DataGridTextColumn Header="Ноябрь" Binding="{Binding Cells[11]}"/>
+                                <DataGridTextColumn Header="Декабрь" Binding="{Binding Cells[12]}"/>
                                 <!-- остальные месяцы по аналогии -->
                             </DataGrid.Columns>
                         </DataGrid>
