@@ -11,6 +11,7 @@ namespace TransStarterTest.ViewModels
         private readonly AppDbContext _context;
         private ReportViewMode _viewMode;
         private ReportSettings _reportSettings;
+        private List<int> _years;
 
         public ReportTabViewModel(string title, AppDbContext context)
         {
@@ -19,7 +20,9 @@ namespace TransStarterTest.ViewModels
             Pivot = new PivotViewModel(context);
             ReportSettings = new ReportSettings();
             ViewMode = ReportViewMode.Details;
-            LoadDetails();
+
+            LoadData();
+            GetSalesYears();
         }
 
         public string Title { get; }
@@ -57,20 +60,28 @@ namespace TransStarterTest.ViewModels
 
         public object CurrentRows => ViewMode == ReportViewMode.Details ? (object)ReportData : Pivot.Rows;
 
+        public List<int> AvailableYears
+        {
+            get => _years;
+            set
+            {
+                SetProperty(ref _years, value);
+            }
+        }
+
         public void Refresh()
         {
             if (ViewMode == ReportViewMode.Details)
-                LoadDetails();
+                LoadData();
             else if (ViewMode == ReportViewMode.Pivot)
                 Pivot.Load(ReportSettings);
 
             OnPropertyChanged(nameof(CurrentRows));
         }
 
-        private void LoadDetails()
+        private void LoadData()
         {
             var items = _context.Sales
-               
                 .SelectMany(sale => sale.Items)
                 .Select(saleItem => new SaleItemDto
                 {
@@ -85,6 +96,11 @@ namespace TransStarterTest.ViewModels
             ReportData = new ObservableCollection<SaleItemDto>(items);
             OnPropertyChanged(nameof(ReportData));
             OnPropertyChanged(nameof(CurrentRows));
+        }
+
+        private void GetSalesYears()
+        {
+            AvailableYears = ReportData.Select(saleItem => saleItem.Date.Year).Distinct().ToList();
         }
 
         private void ReportSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)

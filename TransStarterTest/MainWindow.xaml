@@ -97,7 +97,7 @@
 
                                 <TextBlock Text="Год:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                 <ComboBox Width="100"
-                                          ItemsSource="{Binding DataContext.AvailableYears, RelativeSource={RelativeSource AncestorType=Window}}"
+                                          ItemsSource="{Binding AvailableYears}"
                                           SelectedItem="{Binding ReportSettings.YearFilter}"/>
                             </StackPanel>
 

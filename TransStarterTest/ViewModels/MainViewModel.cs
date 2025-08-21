@@ -20,15 +20,11 @@ namespace TransStarterTest.ViewModels
 
             Tabs = new ObservableCollection<ReportTabViewModel>();
            
-            AvailableYears = new ObservableCollection<int> { 2023, 2024, 2025 };
-
             AddTabCommand = new RelayCommand(_ => AddTab());
             ExportCommand = new RelayCommand(_ => Export());
 
             AddTab();
         }
-
-        public ObservableCollection<int> AvailableYears { get; set; }
 
         public ObservableCollection<ReportTabViewModel> Tabs { get; set; }
 
@@ -47,13 +43,7 @@ namespace TransStarterTest.ViewModels
 
         private void AddTab()
         {
-            var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context)
-            {
-                ReportSettings = new ReportSettings
-                {
-                    YearFilter = AvailableYears[0]
-                }
-            };
+            var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context);
             Tabs.Add(tab);
         }
 
