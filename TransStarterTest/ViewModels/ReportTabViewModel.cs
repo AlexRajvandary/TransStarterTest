@@ -14,17 +14,15 @@ namespace TransStarterTest.ViewModels
         private readonly AppDbContext _context;
         private ReportViewMode _viewMode;
         private ReportSettings _reportSettings;
-        private List<int> _years;
-        private List<string> _models;
 
-        public ReportTabViewModel(string title, AppDbContext context)
+        public ReportTabViewModel(string title, AppDbContext context, ReportViewMode viewMode = ReportViewMode.Details)
         {
             Title = title;
             _context = context;
             Pivot = new PivotViewModel(context);
             ReportSettings = new ReportSettings();
             SalesHighlightSettings = new SalesHighlightSettings(isEnabled: true, _defaultHighlightThreshold);
-            ViewMode = ReportViewMode.Details;
+            ViewMode = viewMode;
         }
 
         public string Title { get; }

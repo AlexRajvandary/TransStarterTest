@@ -10,11 +10,14 @@ namespace TransStarterTest.Commands
 
         public AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null)
         {
-            _execute = execute; _canExecute = canExecute;
+            _execute = execute;
+            _canExecute = canExecute;
         }
 
-        public bool CanExecute(object? parameter) => !_isRunning && (_canExecute?.Invoke() ?? true);
         public event EventHandler? CanExecuteChanged;
+
+        public bool CanExecute(object? parameter) => !_isRunning && (_canExecute?.Invoke() ?? true);
+
         public async void Execute(object? parameter)
         {
             if (_isRunning) return;
@@ -23,5 +26,4 @@ namespace TransStarterTest.Commands
             finally { _isRunning = false; CanExecuteChanged?.Invoke(this, EventArgs.Empty); }
         }
     }
-
 }

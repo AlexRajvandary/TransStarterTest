@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Domain.Interfaces;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace Infrastructure.Services
@@ -17,7 +18,14 @@ namespace Infrastructure.Services
 
                 for (int i = 0; i < properties.Length; i++)
                 {
-                    worksheet.Cell(1, i + 1).Value = properties[i].Name;
+                    var prop = properties[i];
+                    var descriptionAttr = prop.GetCustomAttributes(typeof(DescriptionAttribute), false)
+                                              .Cast<DescriptionAttribute>()
+                                              .FirstOrDefault();
+
+                    var header = descriptionAttr?.Description ?? prop.Name;
+
+                    worksheet.Cell(1, i + 1).Value = header;
                     worksheet.Cell(1, i + 1).Style.Font.Bold = true;
                 }
 

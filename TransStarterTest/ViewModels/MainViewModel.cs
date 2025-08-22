@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Input;
 using TransStarterTest.Commands;
 using TransStarterTest.Models.Contracts;
+using TransStarterTest.Models.Enums;
 
 namespace TransStarterTest.ViewModels
 {
@@ -29,10 +30,12 @@ namespace TransStarterTest.ViewModels
 
             Tabs = new ObservableCollection<ReportTabViewModel>();
 
-            AddTabCommand = new RelayCommand(_ => AddTab());
+            AddTabCommand = new AsyncRelayCommand(AddTabAsync);
             ExportCommand = new AsyncRelayCommand(ExportAsync);
 
-            AddTab();
+            //Для демонстрационных целей, чтобы экран не был пустым
+            AddTabAsync(ReportViewMode.Details);
+            AddTabAsync(ReportViewMode.Pivot);
             SelectedTab = Tabs.First();
         }
 
@@ -53,35 +56,47 @@ namespace TransStarterTest.ViewModels
 
         public ICommand ExportCommand { get; }
 
-        private async void AddTab()
+        private async Task AddTabAsync()
         {
-            var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context);
+            await AddTabAsync(ReportViewMode.Details);
+        }
+
+        private async Task AddTabAsync(ReportViewMode viewMode = ReportViewMode.Details)
+        {
+            var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context, viewMode);
             await tab.InitializeAsync();
             Tabs.Add(tab);
         }
 
         private async Task ExportAsync()
         {
-            var folderPath = await _folderPickerService.PickFolderAsync();
-
-            if(folderPath == null) { return; }
-
-            if (SelectedTab.ViewMode == Models.Enums.ReportViewMode.Details)
+            try
             {
-                var fileName = $"sales_report_{DateTime.Now:dd_MM_YYYY}.xlsx";
-                var fullPath = Path.Combine(folderPath, fileName);
+                var folderPath = await _folderPickerService.PickFolderAsync();
+               
+                if (folderPath == null) { return; }
 
-                await _exportService.ExportReportAsync(SelectedTab.Title, SelectedTab.ReportData, fullPath);
-            }
-            else
+                if (SelectedTab.ViewMode == Models.Enums.ReportViewMode.Details)
+                {
+                    var fileName = $"sales_report_{DateTime.Now:dd_MM_yyyy}.xlsx";
+                    var fullPath = Path.Combine(folderPath, fileName);
+
+                    await _exportService.ExportReportAsync(SelectedTab.Title, SelectedTab.ReportData, fullPath);
+                }
+                else
+                {
+                    var fileName = $"pivot_{SelectedTab.ReportSettings.ToString()}_report_{DateTime.Now:dd_MM_yyyy}.xlsx";
+                    var fullPath = Path.Combine(folderPath, fileName);
+
+                    await _exportService.ExportReportAsync(SelectedTab.Title, SelectedTab.Pivot.Rows, fullPath);
+                }
+
+                _notificationDialogService.ShowNotification("Файл успешно сохранён");
+            }catch(Exception ex)
             {
-                var fileName = $"pivot_report_{DateTime.Now:dd_MM_YYYY}.xlsx";
-                var fullPath = Path.Combine(folderPath, fileName);
-
-                await _exportService.ExportReportAsync(SelectedTab.Title, SelectedTab.Pivot.Rows, fullPath);
+                _notificationDialogService.ShowError($"Во время сохранения файла произошла ошибка: {ex.Message}");
             }
-
-            _notificationDialogService.ShowNotification("Файл успешно сохранён");
+           
         }
     }
 }

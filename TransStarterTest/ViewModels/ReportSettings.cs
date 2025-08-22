@@ -53,5 +53,13 @@ namespace TransStarterTest.ViewModels
             YearFilter = AvailableYears.FirstOrDefault();
             ModelFilter = AvailableModels.FirstOrDefault();
         }
+
+        public override string ToString()
+        {
+            var info = ModelFilter == "(Не выбрано)"
+                ? $"{GroupBy.GetString()}_{YearFilter}"
+                : $"{GroupBy.GetString()}_{ModelFilter}_{YearFilter}";
+            return info;
+        }
     }
 }
