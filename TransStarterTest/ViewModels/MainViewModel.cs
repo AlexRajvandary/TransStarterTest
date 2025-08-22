@@ -63,7 +63,7 @@ namespace TransStarterTest.ViewModels
         {
             try
             {
-                var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context, viewMode);
+                var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context, _notificationDialogService, viewMode);
                 await tab.InitializeAsync();
                 Tabs.Add(tab);
             }
@@ -71,7 +71,6 @@ namespace TransStarterTest.ViewModels
             {
                 _notificationDialogService.ShowError($"При создании нового отчёта произошла ошибка: {ex.Message}");
             }
-
         }
 
         private async Task ExportAsync()
@@ -98,7 +97,8 @@ namespace TransStarterTest.ViewModels
                 }
 
                 _notificationDialogService.ShowNotification("Файл успешно сохранён");
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
                 _notificationDialogService.ShowError($"Во время сохранения файла произошла ошибка: {ex.Message}");
             }

@@ -4,6 +4,8 @@ namespace TransStarterTest.ViewModels
 {
     public class ReportSettings : BaseViewModel
     {
+        private const string modelFilterNotSelectedString = "(Не выбрано)";
+
         private AggregateOptions _aggregateBy;
         private GroupingOptions _groupBy;
         private List<string> _models;
@@ -34,6 +36,8 @@ namespace TransStarterTest.ViewModels
             set => SetProperty(ref _groupBy, value);
         }
 
+        public bool IsModelFilterSelected => ModelFilter != modelFilterNotSelectedString;
+
         public string? ModelFilter
         {
             get => _modelFilter;
@@ -48,7 +52,7 @@ namespace TransStarterTest.ViewModels
 
         public void Initialize(List<string> models, List<int> years)
         {
-            AvailableModels = models;
+            AvailableModels = new[] { modelFilterNotSelectedString }.Concat(models).ToList();
             AvailableYears = years;
             YearFilter = AvailableYears.FirstOrDefault();
             ModelFilter = AvailableModels.FirstOrDefault();
@@ -56,7 +60,7 @@ namespace TransStarterTest.ViewModels
 
         public override string ToString()
         {
-            var info = ModelFilter == "(Не выбрано)"
+            var info = IsModelFilterSelected
                 ? $"{GroupBy.GetString()}_{YearFilter}"
                 : $"{GroupBy.GetString()}_{ModelFilter}_{YearFilter}";
             return info;
