@@ -50,8 +50,6 @@ namespace TransStarterTest.ViewModels
             }
         }
 
-        public string SelectedExportFilePath { get; set; }
-
         public ICommand AddTabCommand { get; }
 
         public ICommand ExportCommand { get; }
@@ -63,9 +61,17 @@ namespace TransStarterTest.ViewModels
 
         private async Task AddTabAsync(ReportViewMode viewMode = ReportViewMode.Details)
         {
-            var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context, viewMode);
-            await tab.InitializeAsync();
-            Tabs.Add(tab);
+            try
+            {
+                var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context, viewMode);
+                await tab.InitializeAsync();
+                Tabs.Add(tab);
+            }
+            catch (Exception ex)
+            {
+                _notificationDialogService.ShowError($"При создании нового отчёта произошла ошибка: {ex.Message}");
+            }
+
         }
 
         private async Task ExportAsync()
@@ -96,7 +102,6 @@ namespace TransStarterTest.ViewModels
             {
                 _notificationDialogService.ShowError($"Во время сохранения файла произошла ошибка: {ex.Message}");
             }
-           
         }
     }
 }

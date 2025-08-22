@@ -27,6 +27,10 @@ namespace TransStarterTest
         {
             base.OnStartup(e);
 
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             var culture = new CultureInfo("ru-RU");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
@@ -39,6 +43,24 @@ namespace TransStarterTest
 
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var ex = e.ExceptionObject as Exception;
+            MessageBox.Show($"Фатальная ошибка {ex?.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+        {
+            MessageBox.Show($"Необработанное исключение в Task: {e.Exception.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            e.SetObserved();
+        }
+
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show($"Oшибка {e?.Exception}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            e.Handled = true;
         }
 
         private void ConfigureServices(IServiceCollection services)
