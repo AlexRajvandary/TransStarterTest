@@ -7,13 +7,13 @@
         xmlns:enum="clr-namespace:TransStarterTest.Models.Enums"
         xmlns:converters="clr-namespace:TransStarterTest.Converters"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        xmlns:attachedBehaviors="clr-namespace:TransStarterTest.Behaviors"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="900">
     <Window.Resources>
         <converters:EnumDescriptionConverter x:Key="EnumDescConverter"/>
         <converters:HighlightCellConverter x:Key="HighlightCellConverter"/>
-
+        <converters:NullToNotSelectedConverter x:Key="NullToNotSelectedConverter"/>
+       
         <!-- Значения для ComboBox-ов режима и настроект группировки/аггрегирования -->
         <ObjectDataProvider MethodName="GetValues" 
                             ObjectType="{x:Type sys:Enum}" 
@@ -88,6 +88,16 @@
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <CheckBox IsChecked="{Binding SalesHighlightSettings.IsEnabled}" Margin="10,0,0,0"/>
                                     <TextBox Text="{Binding SalesHighlightSettings.Threshold}" Width="60" Margin="5,0,0,0"/>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Header="Фильтрация" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <ComboBox ItemsSource="{Binding AvailableModels}"
+                                              SelectedItem="{Binding ReportSettings.ModelFilter}"
+>
+       
+                                    </ComboBox>
                                 </StackPanel>
                             </GroupBox>
 

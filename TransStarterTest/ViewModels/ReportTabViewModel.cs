@@ -12,20 +12,22 @@ namespace TransStarterTest.ViewModels
         private ReportViewMode _viewMode;
         private ReportSettings _reportSettings;
         private List<int> _years;
+        private List<string> _models;
 
         public ReportTabViewModel(string title, AppDbContext context)
         {
             Title = title;
             _context = context;
             Pivot = new PivotViewModel(context);
-            DynamicPivot = new DynamicPivotViewModel(context);
             ReportSettings = new ReportSettings();
             SalesHighlightSettings = new SalesHighlightSettings(isEnabled: true, threshold: 5000000);
             ViewMode = ReportViewMode.Details;
 
             LoadData();
-            GetSalesYears();
+            GetAvailableSalesYears();
+            GetAvailableModels();
             ReportSettings.YearFilter = AvailableYears.First();
+            ReportSettings.ModelFilter = AvailableModels.First();
         }
 
         public string Title { get; }
@@ -43,8 +45,6 @@ namespace TransStarterTest.ViewModels
         public ObservableCollection<SaleItemDto> ReportData { get; set; } = new();
 
         public PivotViewModel Pivot { get; }
-
-        public DynamicPivotViewModel DynamicPivot { get; }
 
         public ReportSettings ReportSettings
         {
@@ -74,6 +74,15 @@ namespace TransStarterTest.ViewModels
             }
         }
 
+        public List<string> AvailableModels
+        {
+            get => _models;
+            set
+            {
+                SetProperty(ref _models, value);
+            }
+        }
+
         public void Refresh()
         {
             if (ViewMode == ReportViewMode.Details)
@@ -93,16 +102,25 @@ namespace TransStarterTest.ViewModels
                     BrandName = saleItem.Car.Brand.Name,
                     ModelName = saleItem.Car.Model.Name,
                     Price = (double)saleItem.Price
-                }).OrderByDescending(saleItem => saleItem.Date)
+                }).Where(saleItem=> string.IsNullOrEmpty(ReportSettings.ModelFilter)
+                                 || ReportSettings.ModelFilter == "(Не выбрано)"
+                                 || saleItem.ModelName == ReportSettings.ModelFilter).OrderByDescending(saleItem => saleItem.Date)
                 .ToList();
 
             ReportData = new ObservableCollection<SaleItemDto>(items);
             OnPropertyChanged(nameof(ReportData));
         }
 
-        private void GetSalesYears()
+        private void GetAvailableSalesYears()
         {
             AvailableYears = ReportData.Select(saleItem => saleItem.Date.Year).Distinct().OrderDescending().ToList();
+        }
+
+        private void GetAvailableModels()
+        {
+            AvailableModels = new List<string>();
+            AvailableModels.Add("(Не выбрано)");
+            AvailableModels.AddRange(ReportData.Select(saleItem => saleItem.ModelName).Distinct().Order());
         }
 
         private void ReportSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)

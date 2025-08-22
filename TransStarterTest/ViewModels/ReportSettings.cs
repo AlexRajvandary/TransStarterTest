@@ -8,6 +8,7 @@ namespace TransStarterTest.ViewModels
         private ColumnOptions _columnBy;
         private AggregateOptions _aggregateBy;
         private int _yearFilter;
+        private string? _modelFilter;
 
         public GroupingOptions GroupBy
         {
@@ -31,6 +32,12 @@ namespace TransStarterTest.ViewModels
         {
             get => _yearFilter;
             set => SetProperty(ref _yearFilter, value);
+        }
+
+        public string? ModelFilter
+        {
+            get => _modelFilter;
+            set => SetProperty(ref _modelFilter, value);
         }
     }
 }

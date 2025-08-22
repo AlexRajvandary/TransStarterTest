@@ -25,6 +25,9 @@ namespace TransStarterTest.ViewModels
                 .Include(si => si.Car).ThenInclude(c => c.Model)
                 .Include(si => si.Car).ThenInclude(c => c.Brand)
                 .Include(si => si.Sale)
+                .Where(saleItem => string.IsNullOrEmpty(reportSettings.ModelFilter)
+                                 || reportSettings.ModelFilter == "(Не выбрано)"
+                                 || saleItem.Car.Model.Name == reportSettings.ModelFilter)
                 .GroupBy(si => new
                 {
                     RowKey = reportSettings.GroupBy == GroupingOptions.Model ? si.Car.Brand.Name + " " + si.Car.Model.Name :
