@@ -8,8 +8,6 @@ namespace TransStarterTest.Models.Enums
         Details,
         
         [Description("Сводка по месяцам")]
-        Pivot,
-
-        DynamicPivot
+        Pivot
     }
 }

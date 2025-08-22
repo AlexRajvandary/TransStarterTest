@@ -78,10 +78,8 @@ namespace TransStarterTest.ViewModels
         {
             if (ViewMode == ReportViewMode.Details)
                 LoadData();
-            else if (ViewMode == ReportViewMode.Pivot)
+            else
                 Pivot.Load(ReportSettings);
-            else if (ViewMode == ReportViewMode.DynamicPivot)
-                DynamicPivot.Load(ReportSettings);
         }
 
         private void LoadData()

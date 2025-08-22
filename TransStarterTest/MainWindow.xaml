@@ -75,21 +75,25 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Панель фильтров -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBlock Text="Режим:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                            <ComboBox Width="120"
-                                      ItemsSource="{Binding Source={StaticResource ReportViewModeValues}}"
-                                      SelectedItem="{Binding ViewMode}"
-                                      ItemTemplate="{StaticResource EnumItemTemplate}"
-                                      />
-                            <CheckBox IsChecked="{Binding SalesHighlightSettings.IsEnabled}"/>
-                            <TextBox Text="{Binding SalesHighlightSettings.Threshold}"/>
+                            <GroupBox Header="Режим:">
+                                <ComboBox Width="120"
+                                    ItemsSource="{Binding Source={StaticResource ReportViewModeValues}}"
+                                    SelectedItem="{Binding ViewMode}"
+                                    ItemTemplate="{StaticResource EnumItemTemplate}"
+                                />
+                            </GroupBox>
+                           
+                            <GroupBox Header="Настройки подсвечивания" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <CheckBox IsChecked="{Binding SalesHighlightSettings.IsEnabled}" Margin="10,0,0,0"/>
+                                    <TextBox Text="{Binding SalesHighlightSettings.Threshold}" Width="60" Margin="5,0,0,0"/>
+                                </StackPanel>
+                            </GroupBox>
 
-                            <!-- Параметры только для Pivot -->
-                            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
-                                <StackPanel.Style>
-                                    <Style TargetType="StackPanel">
+                            <GroupBox Header="Настройки группировки" Margin="0,0,0,0">
+                                <GroupBox.Style>
+                                    <Style TargetType="GroupBox">
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ViewMode}" Value="Pivot">
@@ -100,27 +104,27 @@
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </StackPanel.Style>
+                                </GroupBox.Style>
 
-                                <TextBlock Text="Группировка:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                                <ComboBox Width="120"
-                                          ItemsSource="{Binding Source={StaticResource GroupingOptionsValues}}"
-                                          SelectedItem="{Binding ReportSettings.GroupBy}"
-                                          ItemTemplate="{StaticResource EnumItemTemplate}"
-                                          />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="Группировка:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                    <ComboBox Width="120"
+                                              ItemsSource="{Binding Source={StaticResource GroupingOptionsValues}}"
+                                              SelectedItem="{Binding ReportSettings.GroupBy}"
+                                              ItemTemplate="{StaticResource EnumItemTemplate}"/>
 
-                                <TextBlock Text="Агрегат:" VerticalAlignment="Center" Margin="10,0,5,0"/>
-                                <ComboBox Width="120"
-                                          ItemsSource="{Binding Source={StaticResource AggregateOptionsValues}}"
-                                          SelectedItem="{Binding ReportSettings.AggregateBy}"
-                                          ItemTemplate="{StaticResource EnumItemTemplate}"
-                                          />
+                                    <TextBlock Text="Агрегат:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                    <ComboBox Width="120"
+                                              ItemsSource="{Binding Source={StaticResource AggregateOptionsValues}}"
+                                              SelectedItem="{Binding ReportSettings.AggregateBy}"
+                                              ItemTemplate="{StaticResource EnumItemTemplate}"/>
 
-                                <TextBlock Text="Год:" VerticalAlignment="Center" Margin="10,0,5,0"/>
-                                <ComboBox Width="100"
-                                          ItemsSource="{Binding AvailableYears}"
-                                          SelectedItem="{Binding ReportSettings.YearFilter}"/>
-                            </StackPanel>
+                                    <TextBlock Text="Год:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                    <ComboBox Width="100"
+                                              ItemsSource="{Binding AvailableYears}"
+                                              SelectedItem="{Binding ReportSettings.YearFilter}"/>
+                                </StackPanel>
+                            </GroupBox>
                         </StackPanel>
 
                         <!-- Обычный режим -->
@@ -179,7 +183,7 @@
                                   EnableColumnVirtualization="True"
                                   VirtualizingPanel.IsVirtualizing="True"
                                   VirtualizingPanel.VirtualizationMode="Recycling">
-                          
+
                             <DataGrid.Style>
                                 <Style TargetType="DataGrid">
                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -376,30 +380,6 @@
                                 </DataGridTextColumn>
 
                             </DataGrid.Columns>
-                        </DataGrid>
-
-                        <!-- Dynamic Pivot режим -->
-                        <DataGrid x:Name="DynamicPivotGrid"
-                                  ItemsSource="{Binding DynamicPivot.Test}"
-                                  attachedBehaviors:DataGridColumnsBehavior.BindableColumns="{Binding ColumnDefinitions}"
-                            Grid.Row="1"
-                            AutoGenerateColumns="False"
-                            EnableRowVirtualization="True"
-                            EnableColumnVirtualization="True"
-                            VirtualizingPanel.IsVirtualizing="True"
-                            VirtualizingPanel.VirtualizationMode="Recycling">
-
-                            <DataGrid.Style>
-                                <Style TargetType="DataGrid">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ViewMode}" Value="DynamicPivot">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGrid.Style>
-
                         </DataGrid>
                     </Grid>
                 </DataTemplate>
