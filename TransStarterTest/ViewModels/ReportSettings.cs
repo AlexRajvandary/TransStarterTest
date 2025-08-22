@@ -4,11 +4,29 @@ namespace TransStarterTest.ViewModels
 {
     public class ReportSettings : BaseViewModel
     {
-        private GroupingOptions _groupBy;
-        private ColumnOptions _columnBy;
         private AggregateOptions _aggregateBy;
-        private int _yearFilter;
+        private GroupingOptions _groupBy;
+        private List<string> _models;
         private string? _modelFilter;
+        private List<int> _years;
+        private int _yearFilter;
+
+        public AggregateOptions AggregateBy
+        {
+            get => _aggregateBy;
+            set => SetProperty(ref _aggregateBy, value);
+        }
+        public List<string> AvailableModels
+        {
+            get => _models;
+            set => SetProperty(ref _models, value);
+        }
+
+        public List<int> AvailableYears
+        {
+            get => _years;
+            set => SetProperty(ref _years, value);
+        }
 
         public GroupingOptions GroupBy
         {
@@ -16,16 +34,10 @@ namespace TransStarterTest.ViewModels
             set => SetProperty(ref _groupBy, value);
         }
 
-        public ColumnOptions ColumnBy
+        public string? ModelFilter
         {
-            get => _columnBy;
-            set => SetProperty(ref _columnBy, value);
-        }
-
-        public AggregateOptions AggregateBy
-        {
-            get => _aggregateBy;
-            set => SetProperty(ref _aggregateBy, value);
+            get => _modelFilter;
+            set => SetProperty(ref _modelFilter, value);
         }
 
         public int YearFilter
@@ -34,10 +46,12 @@ namespace TransStarterTest.ViewModels
             set => SetProperty(ref _yearFilter, value);
         }
 
-        public string? ModelFilter
+        public void Initialize(List<string> models, List<int> years)
         {
-            get => _modelFilter;
-            set => SetProperty(ref _modelFilter, value);
+            AvailableModels = models;
+            AvailableYears = years;
+            YearFilter = AvailableYears.FirstOrDefault();
+            ModelFilter = AvailableModels.FirstOrDefault();
         }
     }
 }

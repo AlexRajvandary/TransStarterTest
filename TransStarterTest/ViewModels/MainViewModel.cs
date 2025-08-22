@@ -41,9 +41,10 @@ namespace TransStarterTest.ViewModels
 
         public ICommand ExportCommand { get; }
 
-        private void AddTab()
+        private async void AddTab()
         {
             var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context);
+            await tab.InitializeAsync();
             Tabs.Add(tab);
         }
 

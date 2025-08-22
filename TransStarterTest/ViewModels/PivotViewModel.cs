@@ -16,9 +16,9 @@ namespace TransStarterTest.ViewModels
 
         public List<PivotRowViewDto> Rows { get; set; } = new();
 
-        public void Load(ReportSettings reportSettings)
+        public async Task Load(ReportSettings reportSettings)
         {
-            var groupedQuery = _context.Sales
+            var groupedQuery = await _context.Sales
                 .Where(sale => sale.Date.Year == reportSettings.YearFilter)
                 .SelectMany(sale => sale.Items)
                 .Include(si => si.Car).ThenInclude(c => c.Model)
@@ -43,7 +43,7 @@ namespace TransStarterTest.ViewModels
                             reportSettings.AggregateBy == AggregateOptions.SumOfSales ? g.Sum(x => x.Price) :
                             0
                 })
-                .ToList();
+                .ToListAsync();
 
             var pivot = groupedQuery
                 .GroupBy(x => x.RowKey)

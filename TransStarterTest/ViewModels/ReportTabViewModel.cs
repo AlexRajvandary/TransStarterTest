@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using TransStarterTest.Models.DTOs;
@@ -8,6 +9,8 @@ namespace TransStarterTest.ViewModels
 {
     public class ReportTabViewModel : BaseViewModel
     {
+        private const int _defaultHighlightThreshold = 25_000_000;
+
         private readonly AppDbContext _context;
         private ReportViewMode _viewMode;
         private ReportSettings _reportSettings;
@@ -20,14 +23,8 @@ namespace TransStarterTest.ViewModels
             _context = context;
             Pivot = new PivotViewModel(context);
             ReportSettings = new ReportSettings();
-            SalesHighlightSettings = new SalesHighlightSettings(isEnabled: true, threshold: 25000000);
+            SalesHighlightSettings = new SalesHighlightSettings(isEnabled: true, _defaultHighlightThreshold);
             ViewMode = ReportViewMode.Details;
-
-            LoadData();
-            GetAvailableSalesYears();
-            GetAvailableModels();
-            ReportSettings.YearFilter = AvailableYears.First();
-            ReportSettings.ModelFilter = AvailableModels.First();
         }
 
         public string Title { get; }
@@ -37,8 +34,10 @@ namespace TransStarterTest.ViewModels
             get => _viewMode;
             set
             {
-                SetProperty(ref _viewMode, value);
-                Refresh();
+                if (SetProperty(ref _viewMode, value))
+                {
+                    _ = RefreshAsync();
+                }
             }
         }
 
@@ -65,35 +64,25 @@ namespace TransStarterTest.ViewModels
 
         public SalesHighlightSettings SalesHighlightSettings { get; set; }
 
-        public List<int> AvailableYears
+        public async Task InitializeAsync()
         {
-            get => _years;
-            set
-            {
-                SetProperty(ref _years, value);
-            }
+            await LoadData();
+            var years = GetAvailableSalesYears();
+            var models = GetAvailableModels();
+            ReportSettings.Initialize(models, years);
         }
 
-        public List<string> AvailableModels
-        {
-            get => _models;
-            set
-            {
-                SetProperty(ref _models, value);
-            }
-        }
-
-        public void Refresh()
+        public async Task RefreshAsync()
         {
             if (ViewMode == ReportViewMode.Details)
-                LoadData();
+                await LoadData();
             else
-                Pivot.Load(ReportSettings);
+                await Pivot.Load(ReportSettings);
         }
 
-        private void LoadData()
+        private async Task LoadData()
         {
-            var items = _context.Sales
+            var items = await _context.Sales
                 .SelectMany(sale => sale.Items)
                 .Select(saleItem => new SaleItemDto
                 {
@@ -105,27 +94,29 @@ namespace TransStarterTest.ViewModels
                 }).Where(saleItem=> string.IsNullOrEmpty(ReportSettings.ModelFilter)
                                  || ReportSettings.ModelFilter == "(Не выбрано)"
                                  || saleItem.ModelName == ReportSettings.ModelFilter).OrderByDescending(saleItem => saleItem.Date)
-                .ToList();
+                .ToListAsync();
 
-            ReportData = new ObservableCollection<SaleItemDto>(items);
+            ReportData.Clear();
+            foreach (var item in items)
+                ReportData.Add(item);
             OnPropertyChanged(nameof(ReportData));
         }
 
-        private void GetAvailableSalesYears()
+        private List<int> GetAvailableSalesYears()
         {
-            AvailableYears = ReportData.Select(saleItem => saleItem.Date.Year).Distinct().OrderDescending().ToList();
+            return ReportData.Select(saleItem => saleItem.Date.Year).Distinct().OrderDescending().ToList();
         }
 
-        private void GetAvailableModels()
+        private List<string> GetAvailableModels()
         {
-            AvailableModels = new List<string>();
-            AvailableModels.Add("(Не выбрано)");
-            AvailableModels.AddRange(ReportData.Select(saleItem => saleItem.ModelName).Distinct().Order());
+            return new[] { "(Не выбрано)" }
+                .Concat(ReportData.Select(x => x.ModelName).Distinct().Order())
+                .ToList();
         }
 
-        private void ReportSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private async void ReportSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            Refresh();
+            await RefreshAsync();
         }
     }
 }
