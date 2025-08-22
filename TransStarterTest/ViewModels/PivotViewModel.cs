@@ -5,6 +5,9 @@ using TransStarterTest.Models.Enums;
 
 namespace TransStarterTest.ViewModels
 {
+    /// <summary>
+    /// View model для сводки продаж по месяцам
+    /// </summary>
     public class PivotViewModel : BaseViewModel
     {
         private readonly AppDbContext _context;
