@@ -5,11 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TransStarterTest"
         xmlns:enum="clr-namespace:TransStarterTest.Models.Enums"
+        xmlns:converters="clr-namespace:TransStarterTest.Converters"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:attachedBehaviors="clr-namespace:TransStarterTest.Behaviors"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="900">
     <Window.Resources>
+        <converters:EnumDescriptionConverter x:Key="EnumDescConverter"/>
+        <converters:HighlightCellConverter x:Key="HighlightCellConverter"/>
+
         <!-- Значения для ComboBox-ов режима и настроект группировки/аггрегирования -->
         <ObjectDataProvider MethodName="GetValues" 
                             ObjectType="{x:Type sys:Enum}" 
@@ -19,9 +23,9 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
 
-        <ObjectDataProvider MethodName="GetValues" 
-                     ObjectType="{x:Type sys:Enum}" 
-                     x:Key="GroupingOptionsValues">
+        <ObjectDataProvider MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}"
+                            x:Key="GroupingOptionsValues">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="enum:GroupingOptions"/>
             </ObjectDataProvider.MethodParameters>
@@ -34,6 +38,10 @@
                 <x:Type TypeName="enum:AggregateOptions"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+
+        <DataTemplate x:Key="EnumItemTemplate">
+            <TextBlock Text="{Binding Converter={StaticResource EnumDescConverter}}"/>
+        </DataTemplate>
     </Window.Resources>
 
     <Grid Margin="10">
@@ -72,7 +80,9 @@
                             <TextBlock Text="Режим:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                             <ComboBox Width="120"
                                       ItemsSource="{Binding Source={StaticResource ReportViewModeValues}}"
-                                      SelectedItem="{Binding ViewMode}"/>
+                                      SelectedItem="{Binding ViewMode}"
+                                      ItemTemplate="{StaticResource EnumItemTemplate}"
+                                      />
 
                             <!-- Параметры только для Pivot -->
                             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
@@ -92,13 +102,17 @@
 
                                 <TextBlock Text="Группировка:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                                 <ComboBox Width="120"
-                                           ItemsSource="{Binding Source={StaticResource GroupingOptionsValues}}"
-                                          SelectedItem="{Binding ReportSettings.GroupBy}"/>
+                                          ItemsSource="{Binding Source={StaticResource GroupingOptionsValues}}"
+                                          SelectedItem="{Binding ReportSettings.GroupBy}"
+                                          ItemTemplate="{StaticResource EnumItemTemplate}"
+                                          />
 
                                 <TextBlock Text="Агрегат:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                 <ComboBox Width="120"
                                           ItemsSource="{Binding Source={StaticResource AggregateOptionsValues}}"
-                                          SelectedItem="{Binding ReportSettings.AggregateBy}"/>
+                                          SelectedItem="{Binding ReportSettings.AggregateBy}"
+                                          ItemTemplate="{StaticResource EnumItemTemplate}"
+                                          />
 
                                 <TextBlock Text="Год:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                                 <ComboBox Width="100"
@@ -132,7 +146,21 @@
                                 <DataGridTextColumn Header="Покупатель" Binding="{Binding CustomerFullName}"/>
                                 <DataGridTextColumn Header="Бренд" Binding="{Binding BrandName}"/>
                                 <DataGridTextColumn Header="Модель" Binding="{Binding ModelName}"/>
-                                <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:N0}, ConverterCulture=ru-RU}"/>
+                                <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="Price"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 
@@ -161,20 +189,188 @@
 
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Группа" Binding="{Binding RowKey}"/>
-                                <!-- Пример: статично для месяцев -->
-                                <DataGridTextColumn Header="Январь" Binding="{Binding January}"/>
-                                <DataGridTextColumn Header="Февраль" Binding="{Binding Febuary}"/>
-                                <DataGridTextColumn Header="Март" Binding="{Binding March}"/>
-                                <DataGridTextColumn Header="Апрель" Binding="{Binding April}"/>
-                                <DataGridTextColumn Header="Май" Binding="{Binding May}"/>
-                                <DataGridTextColumn Header="Июнь" Binding="{Binding June}"/>
-                                <DataGridTextColumn Header="Июль" Binding="{Binding July}"/>
-                                <DataGridTextColumn Header="Август" Binding="{Binding August}"/>
-                                <DataGridTextColumn Header="Сентябрь" Binding="{Binding September}"/>
-                                <DataGridTextColumn Header="Октябрь" Binding="{Binding October}"/>
-                                <DataGridTextColumn Header="Ноябрь" Binding="{Binding November}"/>
-                                <DataGridTextColumn Header="Декабрь" Binding="{Binding December}"/>
-                                <!-- остальные месяцы по аналогии -->
+
+                                <DataGridTextColumn Header="Январь" Binding="{Binding January, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="January"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Февраль" Binding="{Binding Febuary, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="Febuary"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Март" Binding="{Binding March, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="March"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Апрель" Binding="{Binding April, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="April"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Май" Binding="{Binding May, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="May"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Июнь" Binding="{Binding June, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="June"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Июль" Binding="{Binding July, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="July"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Август" Binding="{Binding August, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="August"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Сентябрь" Binding="{Binding September, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="September"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Октябрь" Binding="{Binding October, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="October"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Ноябрь" Binding="{Binding November, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="November"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Декабрь" Binding="{Binding December, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource HighlightCellConverter}">
+                                                        <Binding Path="December"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+
                             </DataGrid.Columns>
                         </DataGrid>
 
