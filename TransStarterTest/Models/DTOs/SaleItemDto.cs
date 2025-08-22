@@ -1,4 +1,4 @@
-﻿namespace TransStarterTest.Models
+﻿namespace TransStarterTest.Models.DTOs
 {
     public class SaleItemDto
     {

@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using TransStarterTest.Models.DTOs;
 using TransStarterTest.Models.Enums;
 
 namespace TransStarterTest.ViewModels
@@ -13,9 +14,7 @@ namespace TransStarterTest.ViewModels
             _context = context;
         }
 
-        public List<PivotRowViewModel> Rows { get; set; } = new();
-
-        public List<string> ColumnHeaders { get; set; } = new();
+        public List<PivotRowViewDto> Rows { get; set; } = new();
 
         public void Load(ReportSettings reportSettings)
         {
@@ -50,7 +49,7 @@ namespace TransStarterTest.ViewModels
                 .GroupBy(x => x.RowKey)
                 .Select(group =>
                 {
-                    var row = new PivotRowViewModel { RowKey = group.Key };
+                    var row = new PivotRowViewDto { RowKey = group.Key };
 
                     foreach (var cell in group)
                     {

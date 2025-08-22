@@ -8,7 +8,7 @@
         xmlns:converters="clr-namespace:TransStarterTest.Converters"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="900">
+        Title="MainWindow" MinHeight="400" MinWidth="1000">
     <Window.Resources>
         <converters:EnumDescriptionConverter x:Key="EnumDescConverter"/>
         <converters:HighlightCellConverter x:Key="HighlightCellConverter"/>
@@ -51,11 +51,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Car Sales Dashboard" 
-                   FontSize="24" 
+        <TextBlock Text="Trans Starter" 
+                   FontSize="20" 
                    FontWeight="Bold" 
                    HorizontalAlignment="Center" 
-                   Margin="0,0,0,10"/>
+                   />
 
         <TabControl Grid.Row="1" 
                     x:Name="MainTabControl"
@@ -76,7 +76,7 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <GroupBox Header="Режим:">
+                            <GroupBox Header="Режим:" Margin="0,0,10,0">
                                 <ComboBox Width="120"
                                     ItemsSource="{Binding Source={StaticResource ReportViewModeValues}}"
                                     SelectedItem="{Binding ViewMode}"
@@ -91,8 +91,9 @@
                                 </StackPanel>
                             </GroupBox>
 
-                            <GroupBox Header="Фильтрация" Margin="0,0,10,0">
+                            <GroupBox Header="Настройки фильтрации" Margin="0,0,10,0">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="Модель:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                                     <ComboBox ItemsSource="{Binding AvailableModels}"
                                               SelectedItem="{Binding ReportSettings.ModelFilter}"
 >

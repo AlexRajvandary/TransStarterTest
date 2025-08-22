@@ -1,7 +1,7 @@
 ﻿using Infrastructure.Data;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using TransStarterTest.Models;
+using TransStarterTest.Models.DTOs;
 using TransStarterTest.Models.Enums;
 
 namespace TransStarterTest.ViewModels
@@ -20,7 +20,7 @@ namespace TransStarterTest.ViewModels
             _context = context;
             Pivot = new PivotViewModel(context);
             ReportSettings = new ReportSettings();
-            SalesHighlightSettings = new SalesHighlightSettings(isEnabled: true, threshold: 5000000);
+            SalesHighlightSettings = new SalesHighlightSettings(isEnabled: true, threshold: 25000000);
             ViewMode = ReportViewMode.Details;
 
             LoadData();
