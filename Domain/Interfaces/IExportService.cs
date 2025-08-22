@@ -4,6 +4,6 @@ namespace Domain.Interfaces
 {
     public interface IExportService
     {
-        public Task ExportSales(IEnumerable<SaleItem> sales, string filePath);
+        public Task ExportReportAsync<T>(string reportTitle, IEnumerable<T> items, string filePath);
     }
 }

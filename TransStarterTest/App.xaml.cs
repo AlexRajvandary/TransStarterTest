@@ -1,4 +1,6 @@
-﻿using Infrastructure.Data;
+﻿using Domain.Interfaces;
+using Infrastructure.Data;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
@@ -6,6 +8,8 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Windows;
+using TransStarterTest.Models.Contracts;
+using TransStarterTest.View;
 using TransStarterTest.ViewModels;
 
 namespace TransStarterTest
@@ -62,7 +66,10 @@ namespace TransStarterTest
                 var vm = provider.GetRequiredService<MainViewModel>();
                 return new MainWindow { DataContext = vm };
             });
+
+            services.AddSingleton<IExportService, ExcelExportService>();
+            services.AddSingleton<IFolderPickerService, FolderPickerService>();
+            services.AddSingleton<INotificationDialogService, NotificationDialogService>();
         }
     }
-
 }
