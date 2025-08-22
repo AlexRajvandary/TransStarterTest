@@ -20,6 +20,7 @@ namespace TransStarterTest.ViewModels
             Pivot = new PivotViewModel(context);
             DynamicPivot = new DynamicPivotViewModel(context);
             ReportSettings = new ReportSettings();
+            SalesHighlightSettings = new SalesHighlightSettings(isEnabled: true, threshold: 5000000);
             ViewMode = ReportViewMode.Details;
 
             LoadData();
@@ -61,6 +62,8 @@ namespace TransStarterTest.ViewModels
                     _reportSettings.PropertyChanged += ReportSettings_PropertyChanged;
             }
         }
+
+        public SalesHighlightSettings SalesHighlightSettings { get; set; }
 
         public List<int> AvailableYears
         {

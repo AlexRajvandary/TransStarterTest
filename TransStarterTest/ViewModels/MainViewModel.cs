@@ -18,7 +18,6 @@ namespace TransStarterTest.ViewModels
             _serviceProvider = serviceProvider;
 
             Tabs = new ObservableCollection<ReportTabViewModel>();
-            SalesHighlightSettings = new SalesHighlightSettings(isEnabled: true, threshold:25000000);
            
             AddTabCommand = new RelayCommand(_ => AddTab());
             ExportCommand = new RelayCommand(_ => Export());
@@ -28,8 +27,6 @@ namespace TransStarterTest.ViewModels
         }
 
         public ObservableCollection<ReportTabViewModel> Tabs { get; set; }
-
-        public SalesHighlightSettings SalesHighlightSettings { get; set; }
 
         public ReportTabViewModel SelectedTab
         {

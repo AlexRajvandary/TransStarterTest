@@ -83,6 +83,8 @@
                                       SelectedItem="{Binding ViewMode}"
                                       ItemTemplate="{StaticResource EnumItemTemplate}"
                                       />
+                            <CheckBox IsChecked="{Binding SalesHighlightSettings.IsEnabled}"/>
+                            <TextBox Text="{Binding SalesHighlightSettings.Threshold}"/>
 
                             <!-- Параметры только для Pivot -->
                             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
@@ -123,6 +125,7 @@
 
                         <!-- Обычный режим -->
                         <DataGrid Grid.Row="1"
+                                  x:Name="SalesGrid"
                                   ItemsSource="{Binding ReportData}"
                                   IsReadOnly="True"
                                   AutoGenerateColumns="False"
@@ -153,8 +156,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="Price"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="SalesGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="SalesGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -166,6 +169,7 @@
 
                         <!-- Pivot режим -->
                         <DataGrid Grid.Row="1"
+                                  x:Name="PivotGrid"
                                   ItemsSource="{Binding Pivot.Rows}"
                                   CanUserAddRows="False"
                                   CanUserDeleteRows="False"
@@ -197,8 +201,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="January"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -212,8 +216,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="Febuary"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -227,8 +231,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="March"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -242,8 +246,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="April"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -257,8 +261,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="May"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -272,8 +276,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="June"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -287,8 +291,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="July"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -302,8 +306,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="August"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -317,8 +321,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="September"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -332,8 +336,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="October"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -347,8 +351,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="November"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
@@ -362,8 +366,8 @@
                                                 <Setter.Value>
                                                     <MultiBinding Converter="{StaticResource HighlightCellConverter}">
                                                         <Binding Path="December"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.Threshold" ElementName="PivotGrid"/>
+                                                        <Binding Path="DataContext.SalesHighlightSettings.IsEnabled" ElementName="PivotGrid"/>
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>

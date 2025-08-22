@@ -186,7 +186,7 @@ namespace DataGenerator.Services
             return list;
         }
 
-        public decimal GenerateCarPrice(decimal minPrice = 1_000_000, decimal maxPrice = 20_000_000)
+        public decimal GenerateCarPrice(decimal minPrice = 1_000_000, decimal maxPrice = 50_000_000)
         {
             decimal price = (decimal)(_rnd.NextDouble() * (double)(maxPrice - minPrice) + (double)minPrice);
             
