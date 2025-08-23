@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TransStarterTest"
-        xmlns:enum="clr-namespace:TransStarterTest.Models.Enums"
+        xmlns:enum="clr-namespace:TransStarterTest.Domain.Enums"
         xmlns:converters="clr-namespace:TransStarterTest.Converters"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
