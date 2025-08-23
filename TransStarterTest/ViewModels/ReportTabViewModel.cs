@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using TransStarterTest.Models.Contracts;
-using TransStarterTest.Models.DTOs;
-using TransStarterTest.Models.Enums;
+using TransStarterTest.Domain.Contracts;
+using TransStarterTest.Domain.DTOs;
+using TransStarterTest.Domain.Enums;
 
 namespace TransStarterTest.ViewModels
 {
@@ -83,7 +83,7 @@ namespace TransStarterTest.ViewModels
                 if (ViewMode == ReportViewMode.Details)
                     await LoadData();
                 else
-                    await Pivot.Load(ReportSettings);
+                    await Pivot.LoadAsync(ReportSettings);
             }
             catch(Exception ex)
             {

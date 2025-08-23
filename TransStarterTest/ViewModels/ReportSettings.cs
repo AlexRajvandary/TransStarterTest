@@ -1,4 +1,4 @@
-﻿using TransStarterTest.Models.Enums;
+﻿using TransStarterTest.Domain.Enums;
 
 namespace TransStarterTest.ViewModels
 {

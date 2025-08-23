@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace TransStarterTest.Models.Enums
+namespace TransStarterTest.Domain.Enums
 {
     public enum ReportViewMode
     {

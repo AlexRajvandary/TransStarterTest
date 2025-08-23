@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace TransStarterTest.Models.DTOs
+namespace TransStarterTest.Domain.DTOs
 {
     public class SaleItemDto
     {

@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Input;
 using TransStarterTest.Commands;
-using TransStarterTest.Models.Contracts;
-using TransStarterTest.Models.Enums;
+using TransStarterTest.Domain.Contracts;
+using TransStarterTest.Domain.Enums;
 
 namespace TransStarterTest.ViewModels
 {
@@ -81,7 +81,7 @@ namespace TransStarterTest.ViewModels
                
                 if (folderPath == null) { return; }
 
-                if (SelectedTab.ViewMode == Models.Enums.ReportViewMode.Details)
+                if (SelectedTab.ViewMode == ReportViewMode.Details)
                 {
                     var fileName = $"sales_report_{DateTime.Now:dd_MM_yyyy}.xlsx";
                     var fullPath = Path.Combine(folderPath, fileName);

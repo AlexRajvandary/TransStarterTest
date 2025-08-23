@@ -1,4 +1,4 @@
-﻿namespace TransStarterTest.Models.Enums
+﻿namespace TransStarterTest.Domain.Enums
 {
     public static class EnumExtensions
     {

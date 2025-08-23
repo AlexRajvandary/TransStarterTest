@@ -1,4 +1,4 @@
-﻿using TransStarterTest.Models.Contracts;
+﻿using TransStarterTest.Domain.Contracts;
 
 namespace TransStarterTest.View
 {

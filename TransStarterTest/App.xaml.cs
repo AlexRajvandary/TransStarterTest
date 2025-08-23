@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 using System.IO;
 using System.Windows;
-using TransStarterTest.Models.Contracts;
+using TransStarterTest.Domain.Contracts;
 using TransStarterTest.View;
 using TransStarterTest.ViewModels;
 

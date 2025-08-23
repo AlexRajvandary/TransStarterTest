@@ -1,4 +1,4 @@
-﻿namespace TransStarterTest.Models.Contracts
+﻿namespace TransStarterTest.Domain.Contracts
 {
     public interface INotificationDialogService
     {

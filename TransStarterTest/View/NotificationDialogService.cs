@@ -1,5 +1,5 @@
-﻿using TransStarterTest.Models.Contracts;
-using System.Windows;
+﻿using System.Windows;
+using TransStarterTest.Domain.Contracts;
 
 namespace TransStarterTest.View
 {
