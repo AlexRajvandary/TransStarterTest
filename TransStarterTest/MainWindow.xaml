@@ -164,6 +164,8 @@
                                 <DataGridTextColumn Header="Покупатель" Binding="{Binding CustomerFullName}"/>
                                 <DataGridTextColumn Header="Бренд" Binding="{Binding BrandName}"/>
                                 <DataGridTextColumn Header="Модель" Binding="{Binding ModelName}"/>
+                                <DataGridTextColumn Header="Цвет" Binding="{Binding Color}"/>
+                                <DataGridTextColumn Header="Комплектация" Binding="{Binding Configuration}"/>
                                 <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:N0}, ConverterCulture=ru-RU}">
                                     <DataGridTextColumn.CellStyle>
                                         <Style TargetType="DataGridCell">

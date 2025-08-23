@@ -113,7 +113,9 @@ namespace TransStarterTest.ViewModels
                         CustomerFullName = saleItem.Sale.Customer.GetFullName(),
                         BrandName = saleItem.Car.Brand.Name,
                         ModelName = saleItem.Car.Model.Name,
-                        Price = (double)saleItem.Price
+                        Price = (double)saleItem.Price,
+                        Color = saleItem.Car.Color,
+                        Configuration = saleItem.Car.Configuration.Name
                     });
 
                 query = ApplyFilters(query);

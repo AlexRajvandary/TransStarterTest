@@ -18,5 +18,11 @@ namespace TransStarterTest.Domain.DTOs
 
         [Description("Цена")]
         public double Price { get; set; }
+
+        [Description("Цвет")]
+        public string Color { get; set; } = null!;
+
+        [Description("Комплектация")]
+        public string Configuration { get; set; } = null!;
     }
 }
