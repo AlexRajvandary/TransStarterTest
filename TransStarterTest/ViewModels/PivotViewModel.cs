@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using TransStarterTest.Domain.DTOs;
 using TransStarterTest.Domain.Services;
 using TransStarterTest.Models.DTOs;
 
