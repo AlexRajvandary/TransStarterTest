@@ -24,6 +24,7 @@ namespace TransStarterTest.ViewModels
 
         public async Task LoadAsync(ReportSettings reportSettings)
         {
+            //Можно вынести в репозиторий, а репозиторий внедрять из параметров конструктора
             var sales = await _context.Sales
                 .Where(sale => sale.Date.Year == reportSettings.YearFilter)
                 .SelectMany(sale => sale.Items)

@@ -80,6 +80,7 @@ namespace TransStarterTest.ViewModels
         {
             try
             {
+                //Проблемное место, сейчас данные загружаются всякий раз при изменении фильтров, при выборе таба
                 if (ViewMode == ReportViewMode.Details)
                     await LoadData();
                 else
@@ -105,6 +106,7 @@ namespace TransStarterTest.ViewModels
         {
             try
             {
+                //Проблемное место, сейчас данные загружаются всякий раз при изменении фильтров, при выборе таба
                 var query = _context.Sales
                     .SelectMany(sale => sale.Items)
                     .Select(saleItem => new SaleItemDto
