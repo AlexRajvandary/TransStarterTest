@@ -19,7 +19,7 @@ namespace TransStarterTest.ViewModels
         private readonly AppDbContext _context;
         private readonly IExportService _exportService;
         private readonly IFolderPickerService _folderPickerService;
-        private readonly IMessageBoxService _notificationDialogService;
+        private readonly IMessageBoxService _messageBoxService;
 
         public MainViewModel(AppDbContext context,
                              IExportService exportService,
@@ -29,7 +29,7 @@ namespace TransStarterTest.ViewModels
             _context = context;
             _exportService = exportService;
             _folderPickerService = folderPickerService;
-            _notificationDialogService = notificationDialogService;
+            _messageBoxService = notificationDialogService;
 
             Tabs = new ObservableCollection<ReportTabViewModel>();
 
@@ -68,13 +68,13 @@ namespace TransStarterTest.ViewModels
             {
                 //Можно сделать фабрику
                 var tabTitle = $"Отчет {_tabCounter++}";
-                var tab = new ReportTabViewModel(_context, _notificationDialogService, tabTitle, viewMode);
+                var tab = new ReportTabViewModel(_context, _messageBoxService, tabTitle, viewMode);
                 await tab.RefreshAsync();
                 Tabs.Add(tab);
             }
             catch (Exception ex)
             {
-                _notificationDialogService.ShowError($"При создании нового отчёта произошла ошибка: {ex.Message}");
+                _messageBoxService.ShowError($"При создании нового отчёта произошла ошибка: {ex.Message}");
             }
         }
 
@@ -101,11 +101,11 @@ namespace TransStarterTest.ViewModels
                     await _exportService.ExportReportAsync(SelectedTab.Title, SelectedTab.Pivot.Rows, fullPath);
                 }
 
-                _notificationDialogService.ShowNotification("Файл успешно сохранён");
+                _messageBoxService.ShowNotification("Файл успешно сохранён");
             }
             catch(Exception ex)
             {
-                _notificationDialogService.ShowError($"Во время сохранения файла произошла ошибка: {ex.Message}");
+                _messageBoxService.ShowError($"Во время сохранения файла произошла ошибка: {ex.Message}");
             }
         }
     }
