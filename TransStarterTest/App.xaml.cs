@@ -89,7 +89,7 @@ namespace TransStarterTest
 
             services.AddSingleton<IExportService, ExcelExportService>();
             services.AddSingleton<IFolderPickerService, FolderPickerService>();
-            services.AddSingleton<INotificationDialogService, NotificationDialogService>();
+            services.AddSingleton<IMessageBoxService, MessageBoxService>();
         }
     }
 }

@@ -3,7 +3,7 @@ using TransStarterTest.Domain.Contracts;
 
 namespace TransStarterTest.View
 {
-    public sealed class NotificationDialogService : INotificationDialogService
+    public sealed class MessageBoxService : IMessageBoxService
     {
         private string notificationHeader = "Уведомление";
         private string errorHeader = "Ошибка";

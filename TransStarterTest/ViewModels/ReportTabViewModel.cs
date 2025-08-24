@@ -15,11 +15,11 @@ namespace TransStarterTest.ViewModels
         private readonly AppDbContext _context;
         private ReportViewMode _viewMode;
         private ReportSettings _reportSettings;
-        private INotificationDialogService _notificationDialogService;
+        private IMessageBoxService _notificationDialogService;
 
         public ReportTabViewModel(string title,
                                   AppDbContext context,
-                                  INotificationDialogService notificationDialogService,
+                                  IMessageBoxService notificationDialogService,
                                   ReportViewMode viewMode = ReportViewMode.Details)
         {
             Title = title;

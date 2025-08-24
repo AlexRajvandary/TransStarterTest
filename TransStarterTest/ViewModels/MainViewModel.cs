@@ -16,12 +16,12 @@ namespace TransStarterTest.ViewModels
         private readonly AppDbContext _context;
         private readonly IExportService _exportService;
         private readonly IFolderPickerService _folderPickerService;
-        private readonly INotificationDialogService _notificationDialogService;
+        private readonly IMessageBoxService _notificationDialogService;
 
         public MainViewModel(AppDbContext context,
                              IExportService exportService,
                              IFolderPickerService folderPickerService,
-                             INotificationDialogService notificationDialogService)
+                             IMessageBoxService notificationDialogService)
         {
             _context = context;
             _exportService = exportService;

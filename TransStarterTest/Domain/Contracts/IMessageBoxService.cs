@@ -1,6 +1,6 @@
 ﻿namespace TransStarterTest.Domain.Contracts
 {
-    public interface INotificationDialogService
+    public interface IMessageBoxService
     {
         void ShowNotification(string message);
         void ShowError(string message);
