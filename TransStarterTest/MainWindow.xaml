@@ -136,7 +136,7 @@
                                               SelectedItem="{Binding ReportSettings.YearFilter}"/>
                                 </StackPanel>
                             </GroupBox>
-                            <Button Content="Обновить" Command="{Binding RefreshCommand}"/>
+                            <Button Content="Обновить" Command="{Binding RefreshCommand}" VerticalAlignment="Center" Height="30" Margin="0,5,0,0" />
                         </StackPanel>
 
                         <!-- Обычный режим -->

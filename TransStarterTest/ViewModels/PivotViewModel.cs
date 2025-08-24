@@ -1,5 +1,5 @@
 ﻿using TransStarterTest.Domain.DTOs;
-using TransStarterTest.Models.DTOs;
+using TransStarterTest.Domain.Services;
 
 namespace TransStarterTest.ViewModels
 {
@@ -15,7 +15,7 @@ namespace TransStarterTest.ViewModels
             _pivotCalculator = new PivotCalculator();
         }
 
-        public List<PivotRowViewDto> Rows { get; set; } = new();
+        public List<PivotRowDto> Rows { get; set; } = new();
 
         public async Task Refresh(ReportSettings reportSettings, IEnumerable<SaleItemDto> saleItems)
         {

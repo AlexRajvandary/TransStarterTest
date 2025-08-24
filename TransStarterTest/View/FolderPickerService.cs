@@ -11,11 +11,11 @@ namespace TransStarterTest.View
 
         private static string? Show(string? initialFolder)
         {
-            Microsoft.Win32.OpenFolderDialog dialog = new Microsoft.Win32.OpenFolderDialog();
+            var dialog = new Microsoft.Win32.OpenFolderDialog();
             dialog.Title = "Выберите папку для экспорта отчёта";
             bool? result = dialog.ShowDialog();
 
-            return result != null ? result == true ? dialog.FolderName : null : null;
+            return result == true ? dialog.FolderName : null;
         }
     }
 }

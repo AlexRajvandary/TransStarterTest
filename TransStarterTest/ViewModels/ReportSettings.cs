@@ -55,6 +55,7 @@ namespace TransStarterTest.ViewModels
             AvailableModels = new[] { modelFilterNotSelectedString }.Concat(models).ToList();
             AvailableYears = years;
 
+            //При инициализации отчёта фильтры устанавливаются первым возможным значением, но при принудительном обновлении фильтры должны сохранять своё значение
             YearFilter ??= AvailableYears.FirstOrDefault();
             ModelFilter ??= AvailableModels.FirstOrDefault();
         }

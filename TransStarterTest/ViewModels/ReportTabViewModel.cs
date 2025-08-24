@@ -1,9 +1,9 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using Microsoft.EntityFrameworkCore;
+
+using Infrastructure.Data;
 using TransStarterTest.Commands;
 using TransStarterTest.Domain.Contracts;
 using TransStarterTest.Domain.DTOs;
@@ -16,62 +16,63 @@ namespace TransStarterTest.ViewModels
         private const int _defaultHighlightThreshold = 25_000_000;
 
         private readonly AppDbContext _context;
+
+        private List<SaleItemDto> _fullData = null!;
+        private IMessageBoxService _messageBoxService;
+        private ReportSettings _reportSettings = null!;
+        private SalesHighlightSettings _salesHighlightSettings = null!;
         private ReportViewMode _viewMode;
-        private ReportSettings _reportSettings;
-        private IMessageBoxService _notificationDialogService;
-        private List<SaleItemDto> fullData;
-        private SalesHighlightSettings salesHighlightSettings;
-        private static readonly HashSet<string> _pivotReloadTriggers = new()
-        {
+
+        private readonly HashSet<string> _pivotReloadTriggers =
+        [
             nameof(ReportSettings.GroupBy),
             nameof(ReportSettings.AggregateBy),
             nameof(ReportSettings.YearFilter)
-        };
+        ];
 
-        public ReportTabViewModel(string title,
-                                  AppDbContext context,
-                                  IMessageBoxService notificationDialogService,
+        public ReportTabViewModel(AppDbContext context,
+                                  IMessageBoxService messageBoxService,
+                                  string title,
                                   ReportViewMode viewMode = ReportViewMode.Details)
         {
-            Title = title;
             _context = context;
-            _notificationDialogService = notificationDialogService;
-            Pivot = new PivotViewModel();
+            _messageBoxService = messageBoxService;
+            Title = title;
+            ViewMode = viewMode;
+
             ReportSettings = new ReportSettings();
             SalesHighlightSettings = new SalesHighlightSettings(isEnabled: true, _defaultHighlightThreshold);
-            ViewMode = viewMode;
             RefreshCommand = new AsyncRelayCommand(RefreshAsync);
+            Pivot = new PivotViewModel();
         }
 
-        public string Title { get; }
-
-        public ReportViewMode ViewMode
-        {
-            get => _viewMode;
-            set
-            {
-                SetProperty(ref _viewMode, value);
-            }
-        }
-
+        /// <summary>
+        /// Полный список продаж. Загружается из бд при инициализации один раз и потом по запросу с помощью кнопки "Обновить"
+        /// </summary>
         public List<SaleItemDto> FullData
         {
-            get => fullData;
+            get => _fullData;
             set
             {
-                if (fullData != value)
+                if (_fullData != value)
                 {
-                    fullData = value;
+                    _fullData = value;
                     UpdateReportData();
                 }
             }
         }
 
+        /// <summary>
+        /// Сводка продаж по месяцам для выбранного года
+        /// </summary>
+        public PivotViewModel Pivot { get; }
+
         public ICommand RefreshCommand { get; }
 
+        /// <summary>
+        /// Данные для отчёта (DataGrid привязан к этому свойству)
+        /// </summary>
         public ObservableCollection<SaleItemDto> ReportData { get; set; } = new();
-
-        public PivotViewModel Pivot { get; }
 
         public ReportSettings ReportSettings
         {
@@ -92,10 +93,34 @@ namespace TransStarterTest.ViewModels
 
         public SalesHighlightSettings SalesHighlightSettings
         {
-            get => salesHighlightSettings;
-            set => SetProperty(ref salesHighlightSettings, value);
+            get => _salesHighlightSettings;
+            set => SetProperty(ref _salesHighlightSettings, value);
         }
 
+        /// <summary>
+        /// Название отчёта. Добавляется в заголовок таба и в название листа при экспорте
+        /// </summary>
+        public string Title { get; }
+
+        /// <summary>
+        /// Режим отчёта <list type="bullet">
+        /// <item><see cref="ReportViewMode.Details"/> — Все продажи</item>
+        /// <item><see cref="ReportViewMode.Pivot"/> — Сводка по месяцам</item>
+        /// </list>
+        /// </summary>
+        public ReportViewMode ViewMode
+        {
+            get => _viewMode;
+            set
+            {
+                SetProperty(ref _viewMode, value);
+            }
+        }
+
+        /// <summary>
+        /// Загружает данные продаж из бд
+        /// </summary>
+        /// <returns></returns>
         public async Task RefreshAsync()
         {
             try
@@ -107,10 +132,15 @@ namespace TransStarterTest.ViewModels
             }
             catch (Exception ex)
             {
-                _notificationDialogService.ShowError($"В процессе обновления отчёта произошла ошибка: {ex.Message}");
+                _messageBoxService.ShowError($"В процессе обновления отчёта произошла ошибка: {ex.Message}");
             }
         }
 
+        /// <summary>
+        /// Фильтрует продажи по модели авто
+        /// </summary>
+        /// <param name="saleItems"></param>
+        /// <returns></returns>
         private IEnumerable<SaleItemDto> ApplyFilters(IEnumerable<SaleItemDto> saleItems)
         {
             if (!string.IsNullOrEmpty(ReportSettings.ModelFilter) && ReportSettings.IsModelFilterSelected)
@@ -121,6 +151,10 @@ namespace TransStarterTest.ViewModels
             return saleItems;
         }
 
+        /// <summary>
+        /// Полностью загружает данные в память
+        /// </summary>
+        /// <returns></returns>
         private async Task LoadSaleItemDtosAsync()
         {
             try
@@ -142,10 +176,14 @@ namespace TransStarterTest.ViewModels
             }
             catch (Exception ex)
             {
-                _notificationDialogService.ShowError($"При загрузке отчёта всех продаж произошла ошибка: {ex.Message}.");
+                _messageBoxService.ShowError($"При загрузке отчёта всех продаж произошла ошибка: {ex.Message}.");
             }
         }
 
+        /// <summary>
+        /// Фильтрует и сортирует продажи. Метод вызывается после полного обновления списка продаж
+        /// или изменений настроек фильтрации (при выборе другой модели авто).
+        /// </summary>
         private void UpdateReportData()
         {
             var filteredData = ApplyFilters(FullData);
@@ -156,26 +194,39 @@ namespace TransStarterTest.ViewModels
                 ReportData.Add(item);
         }
 
+        /// <summary>
+        /// Получаем список годов продаж для выпадающего списка фильтра.
+        /// </summary>
+        /// <returns></returns>
         private List<int> GetAvailableSalesYears()
         {
             return FullData.Select(saleItem => saleItem.Date.Year).Distinct().OrderDescending().ToList();
         }
 
+        /// <summary>
+        /// Получаем список моделей для выпадающего списка фильтра.
+        /// </summary>
+        /// <returns></returns>
         private List<string> GetAvailableModels()
         {
             return FullData.Select(x => x.ModelName).Distinct().Order().ToList();
         }
 
+        /// <summary>
+        /// Обновляет таблицы после изменений настроек фильтров и группировок.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ReportSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ReportSettings.ModelFilter))
             {
                 UpdateReportData();
-                await Pivot.Refresh(ReportSettings, fullData);
+                await Pivot.Refresh(ReportSettings, _fullData);
             }
             else if (_pivotReloadTriggers.Contains(e.PropertyName!))
             {
-                await Pivot.Refresh(ReportSettings, fullData);
+                await Pivot.Refresh(ReportSettings, _fullData);
             }
         }
     }

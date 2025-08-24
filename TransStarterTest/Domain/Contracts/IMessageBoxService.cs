@@ -2,7 +2,7 @@
 {
     public interface IMessageBoxService
     {
-        void ShowNotification(string message);
         void ShowError(string message);
+        void ShowNotification(string message);
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 
-namespace TransStarterTest.Models.DTOs
+namespace TransStarterTest.Domain.DTOs
 {
-    public class PivotRowViewDto
+    public class PivotRowDto
     {
         [Description("Группа")]
-        public string RowKey { get; set; }
+        public string RowKey { get; set; } = null!;
 
         [Description("Январь")]
         public double January { get; set; }

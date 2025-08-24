@@ -1,8 +1,10 @@
-﻿using Domain.Interfaces;
-using Infrastructure.Data;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Input;
+
+using Domain.Interfaces;
+using Infrastructure.Data;
+
 using TransStarterTest.Commands;
 using TransStarterTest.Domain.Contracts;
 using TransStarterTest.Domain.Enums;
@@ -11,8 +13,9 @@ namespace TransStarterTest.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
+        private ReportTabViewModel _selectedTab = null!;
         private int _tabCounter = 1;
-        private ReportTabViewModel _selectedTab;
+       
         private readonly AppDbContext _context;
         private readonly IExportService _exportService;
         private readonly IFolderPickerService _folderPickerService;
@@ -59,12 +62,13 @@ namespace TransStarterTest.ViewModels
             await AddTabAsync(ReportViewMode.Details);
         }
 
-        private async Task AddTabAsync(ReportViewMode viewMode = ReportViewMode.Details)
+        private async Task AddTabAsync(ReportViewMode viewMode)
         {
             try
             {
                 //Можно сделать фабрику
-                var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context, _notificationDialogService, viewMode);
+                var tabTitle = $"Отчет {_tabCounter++}";
+                var tab = new ReportTabViewModel(_context, _notificationDialogService, tabTitle, viewMode);
                 await tab.RefreshAsync();
                 Tabs.Add(tab);
             }
