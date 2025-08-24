@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Input;
+using TransStarterTest.Commands;
 using TransStarterTest.Domain.Contracts;
 using TransStarterTest.Domain.DTOs;
 using TransStarterTest.Domain.Enums;
@@ -16,6 +18,7 @@ namespace TransStarterTest.ViewModels
         private ReportViewMode _viewMode;
         private ReportSettings _reportSettings;
         private IMessageBoxService _notificationDialogService;
+        private List<SaleItemDto> fullData;
 
         public ReportTabViewModel(string title,
                                   AppDbContext context,
@@ -25,10 +28,11 @@ namespace TransStarterTest.ViewModels
             Title = title;
             _context = context;
             _notificationDialogService = notificationDialogService;
-            Pivot = new PivotViewModel(context);
+            Pivot = new PivotViewModel();
             ReportSettings = new ReportSettings();
             SalesHighlightSettings = new SalesHighlightSettings(isEnabled: true, _defaultHighlightThreshold);
             ViewMode = viewMode;
+            RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         }
 
         public string Title { get; }
@@ -38,12 +42,24 @@ namespace TransStarterTest.ViewModels
             get => _viewMode;
             set
             {
-                if (SetProperty(ref _viewMode, value))
+                SetProperty(ref _viewMode, value);
+            }
+        }
+
+        public List<SaleItemDto> FullData
+        {
+            get => fullData;
+            set
+            {
+                if (fullData != value) 
                 {
-                    _ = RefreshAsync();
+                    fullData = value;
+                    UpdateReportData();
                 }
             }
         }
+
+        public ICommand RefreshCommand { get; }
 
         public ObservableCollection<SaleItemDto> ReportData { get; set; } = new();
 
@@ -68,31 +84,22 @@ namespace TransStarterTest.ViewModels
 
         public SalesHighlightSettings SalesHighlightSettings { get; set; }
 
-        public async Task InitializeAsync()
-        {
-            await LoadData();
-            var years = GetAvailableSalesYears();
-            var models = GetAvailableModels();
-            ReportSettings.Initialize(models, years);
-        }
-
         public async Task RefreshAsync()
         {
             try
             {
-                //Проблемное место, сейчас данные загружаются всякий раз при изменении фильтров, при выборе таба
-                if (ViewMode == ReportViewMode.Details)
-                    await LoadData();
-                else
-                    await Pivot.LoadAsync(ReportSettings);
+                await LoadSaleItemDtosAsync();
+                var years = GetAvailableSalesYears();
+                var models = GetAvailableModels();
+                ReportSettings.Refresh(models, years);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _notificationDialogService.ShowError($"В процессе обновления отчёта произошла ошибка: {ex.Message}");
             }
         }
 
-        private IQueryable<SaleItemDto> ApplyFilters(IQueryable<SaleItemDto> saleItems)
+        private IEnumerable<SaleItemDto> ApplyFilters(IEnumerable<SaleItemDto> saleItems)
         {
             if (!string.IsNullOrEmpty(ReportSettings.ModelFilter) && ReportSettings.IsModelFilterSelected)
             {
@@ -102,12 +109,11 @@ namespace TransStarterTest.ViewModels
             return saleItems;
         }
 
-        private async Task LoadData()
+        private async Task LoadSaleItemDtosAsync()
         {
             try
             {
-                //Проблемное место, сейчас данные загружаются всякий раз при изменении фильтров, при выборе таба
-                var query = _context.Sales
+                var salesItemDtos = await _context.Sales
                     .SelectMany(sale => sale.Items)
                     .Select(saleItem => new SaleItemDto
                     {
@@ -118,21 +124,24 @@ namespace TransStarterTest.ViewModels
                         Price = (double)saleItem.Price,
                         Color = saleItem.Car.Color,
                         Configuration = saleItem.Car.Configuration.Name
-                    });
+                    }).ToListAsync();
 
-                query = ApplyFilters(query);
-                var items = await query.OrderByDescending(saleItem => saleItem.Date).ToListAsync();
-
-                ReportData.Clear();
-                foreach (var item in items)
-                    ReportData.Add(item);
-
-                OnPropertyChanged(nameof(ReportData));
+                FullData = salesItemDtos;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _notificationDialogService.ShowError($"При загрузке отчёта всех продаж произошла ошибка: {ex.Message}.");
             }
+        }
+
+        private void UpdateReportData()
+        {
+            var filteredData = ApplyFilters(FullData);
+            var items = filteredData.OrderByDescending(saleItem => saleItem.Date);
+
+            ReportData.Clear();
+            foreach (var item in items)
+                ReportData.Add(item);
         }
 
         private List<int> GetAvailableSalesYears()
@@ -147,7 +156,15 @@ namespace TransStarterTest.ViewModels
 
         private async void ReportSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            await RefreshAsync();
+            if(e.PropertyName == nameof(ReportSettings.ModelFilter))
+            {
+                UpdateReportData();
+                await Pivot.Refresh(ReportSettings, fullData);
+            }
+            else
+            {
+                await Pivot.Refresh(ReportSettings, fullData);
+            }
         }
     }
 }

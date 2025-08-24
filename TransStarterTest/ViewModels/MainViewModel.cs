@@ -65,7 +65,7 @@ namespace TransStarterTest.ViewModels
             {
                 //Можно сделать фабрику
                 var tab = new ReportTabViewModel($"Отчет {_tabCounter++}", _context, _notificationDialogService, viewMode);
-                await tab.InitializeAsync();
+                await tab.RefreshAsync();
                 Tabs.Add(tab);
             }
             catch (Exception ex)

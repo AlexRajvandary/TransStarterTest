@@ -50,7 +50,7 @@ namespace TransStarterTest.ViewModels
             set => SetProperty(ref _yearFilter, value);
         }
 
-        public void Initialize(List<string> models, List<int> years)
+        public void Refresh(List<string> models, List<int> years)
         {
             AvailableModels = new[] { modelFilterNotSelectedString }.Concat(models).ToList();
             AvailableYears = years;

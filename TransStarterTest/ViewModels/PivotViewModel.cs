@@ -1,7 +1,4 @@
-﻿using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using TransStarterTest.Domain.DTOs;
-using TransStarterTest.Domain.Services;
+﻿using TransStarterTest.Domain.DTOs;
 using TransStarterTest.Models.DTOs;
 
 namespace TransStarterTest.ViewModels
@@ -11,38 +8,18 @@ namespace TransStarterTest.ViewModels
     /// </summary>
     public class PivotViewModel : BaseViewModel
     {
-        private readonly AppDbContext _context;
         private readonly PivotCalculator _pivotCalculator;
 
-        public PivotViewModel(AppDbContext context)
+        public PivotViewModel()
         {
-            _context = context;
             _pivotCalculator = new PivotCalculator();
         }
 
         public List<PivotRowViewDto> Rows { get; set; } = new();
 
-        public async Task LoadAsync(ReportSettings reportSettings)
+        public async Task Refresh(ReportSettings reportSettings, IEnumerable<SaleItemDto> saleItems)
         {
-            //Можно вынести в репозиторий, а репозиторий внедрять из параметров конструктора
-            var sales = await _context.Sales
-                .Where(sale => sale.Date.Year == reportSettings.YearFilter)
-                .SelectMany(sale => sale.Items)
-                .Include(si => si.Car).ThenInclude(c => c.Model)
-                .Include(si => si.Car).ThenInclude(c => c.Brand)
-                .Include(si => si.Sale).ThenInclude(s => s.Customer)
-                .Select(item => new SaleItemDto
-                {
-                    Date = item.Sale.Date,
-                    CustomerFullName = item.Sale.Customer.FirstName + " " + item.Sale.Customer.LastName,
-                    BrandName = item.Car.Brand.Name,
-                    ModelName = item.Car.Model.Name,
-                    Price = (double)item.Price
-                })
-                .ToListAsync();
-
-            Rows = _pivotCalculator.Calculate(sales, reportSettings);
-
+            Rows = await _pivotCalculator.CalculateAsync(saleItems, reportSettings);
             OnPropertyChanged(nameof(Rows));
         }
     }
