@@ -11,7 +11,7 @@ namespace TransStarterTest.ViewModels
         private List<string> _models;
         private string? _modelFilter;
         private List<int> _years;
-        private int _yearFilter;
+        private int? _yearFilter;
 
         public AggregateOptions AggregateBy
         {
@@ -44,7 +44,7 @@ namespace TransStarterTest.ViewModels
             set => SetProperty(ref _modelFilter, value);
         }
 
-        public int YearFilter
+        public int? YearFilter
         {
             get => _yearFilter;
             set => SetProperty(ref _yearFilter, value);
@@ -54,8 +54,9 @@ namespace TransStarterTest.ViewModels
         {
             AvailableModels = new[] { modelFilterNotSelectedString }.Concat(models).ToList();
             AvailableYears = years;
-            YearFilter = AvailableYears.FirstOrDefault();
-            ModelFilter = AvailableModels.FirstOrDefault();
+
+            YearFilter ??= AvailableYears.FirstOrDefault();
+            ModelFilter ??= AvailableModels.FirstOrDefault();
         }
 
         public override string ToString()

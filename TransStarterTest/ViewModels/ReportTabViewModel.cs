@@ -1,4 +1,5 @@
-﻿using Infrastructure.Data;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -19,6 +20,13 @@ namespace TransStarterTest.ViewModels
         private ReportSettings _reportSettings;
         private IMessageBoxService _notificationDialogService;
         private List<SaleItemDto> fullData;
+        private SalesHighlightSettings salesHighlightSettings;
+        private static readonly HashSet<string> _pivotReloadTriggers = new()
+        {
+            nameof(ReportSettings.GroupBy),
+            nameof(ReportSettings.AggregateBy),
+            nameof(ReportSettings.YearFilter)
+        };
 
         public ReportTabViewModel(string title,
                                   AppDbContext context,
@@ -51,7 +59,7 @@ namespace TransStarterTest.ViewModels
             get => fullData;
             set
             {
-                if (fullData != value) 
+                if (fullData != value)
                 {
                     fullData = value;
                     UpdateReportData();
@@ -82,7 +90,11 @@ namespace TransStarterTest.ViewModels
             }
         }
 
-        public SalesHighlightSettings SalesHighlightSettings { get; set; }
+        public SalesHighlightSettings SalesHighlightSettings
+        {
+            get => salesHighlightSettings;
+            set => SetProperty(ref salesHighlightSettings, value);
+        }
 
         public async Task RefreshAsync()
         {
@@ -146,22 +158,22 @@ namespace TransStarterTest.ViewModels
 
         private List<int> GetAvailableSalesYears()
         {
-            return ReportData.Select(saleItem => saleItem.Date.Year).Distinct().OrderDescending().ToList();
+            return FullData.Select(saleItem => saleItem.Date.Year).Distinct().OrderDescending().ToList();
         }
 
         private List<string> GetAvailableModels()
         {
-            return ReportData.Select(x => x.ModelName).Distinct().Order().ToList();
+            return FullData.Select(x => x.ModelName).Distinct().Order().ToList();
         }
 
         private async void ReportSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(ReportSettings.ModelFilter))
+            if (e.PropertyName == nameof(ReportSettings.ModelFilter))
             {
                 UpdateReportData();
                 await Pivot.Refresh(ReportSettings, fullData);
             }
-            else
+            else if (_pivotReloadTriggers.Contains(e.PropertyName!))
             {
                 await Pivot.Refresh(ReportSettings, fullData);
             }
