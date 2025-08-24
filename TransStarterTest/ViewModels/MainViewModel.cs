@@ -3,8 +3,6 @@ using System.IO;
 using System.Windows.Input;
 
 using Domain.Interfaces;
-using Infrastructure.Data;
-
 using TransStarterTest.Commands;
 using TransStarterTest.Domain.Contracts;
 using TransStarterTest.Domain.Enums;
@@ -16,20 +14,20 @@ namespace TransStarterTest.ViewModels
         private ReportTabViewModel _selectedTab = null!;
         private int _tabCounter = 1;
        
-        private readonly AppDbContext _context;
         private readonly IExportService _exportService;
         private readonly IFolderPickerService _folderPickerService;
         private readonly IMessageBoxService _messageBoxService;
+        private readonly IReportTabFactory _tabFactory;
 
-        public MainViewModel(AppDbContext context,
-                             IExportService exportService,
+        public MainViewModel(IExportService exportService,
                              IFolderPickerService folderPickerService,
-                             IMessageBoxService notificationDialogService)
+                             IMessageBoxService messageBoxService,
+                             IReportTabFactory tabFactory)
         {
-            _context = context;
             _exportService = exportService;
             _folderPickerService = folderPickerService;
-            _messageBoxService = notificationDialogService;
+            _messageBoxService = messageBoxService;
+            _tabFactory = tabFactory;
 
             Tabs = new ObservableCollection<ReportTabViewModel>();
 
@@ -66,9 +64,8 @@ namespace TransStarterTest.ViewModels
         {
             try
             {
-                //Можно сделать фабрику
                 var tabTitle = $"Отчет {_tabCounter++}";
-                var tab = new ReportTabViewModel(_context, _messageBoxService, tabTitle, viewMode);
+                var tab = _tabFactory.Create(tabTitle, viewMode);
                 await tab.RefreshAsync();
                 Tabs.Add(tab);
             }

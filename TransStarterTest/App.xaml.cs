@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows;
 using TransStarterTest.Domain.Contracts;
+using TransStarterTest.Domain.Services;
 using TransStarterTest.View;
 using TransStarterTest.ViewModels;
 
@@ -90,6 +91,7 @@ namespace TransStarterTest
             services.AddSingleton<IExportService, ExcelExportService>();
             services.AddSingleton<IFolderPickerService, FolderPickerService>();
             services.AddSingleton<IMessageBoxService, MessageBoxService>();
+            services.AddSingleton<IReportTabFactory, ReportTabFactory>();
         }
     }
 }
