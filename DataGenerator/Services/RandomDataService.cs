@@ -118,7 +118,7 @@ namespace DataGenerator.Services
             configs = GenerateConfigurations();
             _context.SaveChanges();
 
-            cars = GenerateCars(100); // или нужное количество
+            cars = GenerateCars(100);
             _context.SaveChanges();
 
             var customers = GenerateCustomers(salesCount / 5);
